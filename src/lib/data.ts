@@ -1,12 +1,18 @@
 import type { Subject, Course } from '@/lib/types';
-import { Atom, BookOpen, Calculator, Code, Dna, Palette } from 'lucide-react';
+import { BookOpen, Code, Calculator, Languages } from 'lucide-react';
 
 export const subjects: Subject[] = [
   {
-    id: 'science',
-    name: 'Science',
-    description: 'Explore the wonders of the natural world, from physics to biology.',
-    icon: Atom,
+    id: 'english',
+    name: 'English',
+    description: 'Improve your language and communication skills.',
+    icon: BookOpen,
+  },
+  {
+    id: 'japanese',
+    name: 'Japanese',
+    description: 'Learn the Japanese language and culture.',
+    icon: Languages,
   },
   {
     id: 'programming',
@@ -15,50 +21,14 @@ export const subjects: Subject[] = [
     icon: Code,
   },
   {
-    id: 'mathematics',
-    name: 'Mathematics',
+    id: 'math',
+    name: 'Math',
     description: 'Master the language of the universe through numbers and logic.',
     icon: Calculator,
-  },
-  {
-    id: 'history',
-    name: 'History',
-    description: 'Journey through time and uncover the stories of the past.',
-    icon: BookOpen,
-  },
-  {
-    id: 'art',
-    name: 'Art & Design',
-    description: 'Unleash your creativity and learn the principles of visual arts.',
-    icon: Palette,
-  },
-  {
-    id: 'biology',
-    name: 'Biology',
-    description: 'Study living organisms and their vital processes.',
-    icon: Dna,
   },
 ];
 
 export const courses: Course[] = [
-  {
-    id: 'quantum-physics-101',
-    title: 'Quantum Physics 101',
-    description: 'An introductory course to the mind-bending world of quantum mechanics.',
-    subject: 'science',
-    difficulty: 'Advanced',
-    image: 'https://placehold.co/600x400.png',
-    modules: [
-      {
-        id: 'm1',
-        title: 'Module 1: The Quantum Realm',
-        lessons: [
-          { id: 'l1', title: 'Wave-Particle Duality', content: 'In quantum mechanics, wave-particle duality is the concept that every particle or quantum entity may be described as either a particle or a wave. It expresses the inability of the classical concepts "particle" or "wave" to fully describe the behavior of quantum-scale objects. As Albert Einstein wrote: "It seems as though we must use sometimes the one theory and sometimes the other, while at times we may use either. We are faced with a new kind of difficulty. We have two contradictory pictures of reality; separately neither of them fully explains the phenomena of light, but together they do".' },
-          { id: 'l2', title: 'Quantum Superposition', content: 'Superposition is a fundamental principle of quantum mechanics. It states that, much like waves in classical physics, any two (or more) quantum states can be added together ("superposed") and the result will be another valid quantum state; and conversely, that every quantum state can be represented as a sum of two or more other distinct states. Mathematically, it refers to a property of solutions to the Schrödinger equation; since the Schrödinger equation is linear, any linear combination of solutions will also be a solution.' },
-        ],
-      },
-    ],
-  },
   {
     id: 'intro-to-react',
     title: 'Introduction to React',
@@ -89,7 +59,7 @@ export const courses: Course[] = [
     id: 'calculus-i',
     title: 'Calculus I',
     description: 'Explore limits, derivatives, and the fundamentals of calculus.',
-    subject: 'mathematics',
+    subject: 'math',
     difficulty: 'Intermediate',
     image: 'https://placehold.co/600x400.png',
     modules: [
