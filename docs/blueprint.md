@@ -1,4 +1,4 @@
-# **App Name**: EduVerse
+# **App Name**: TeachMe
 
 ## Core Features:
 

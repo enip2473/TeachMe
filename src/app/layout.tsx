@@ -6,8 +6,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { Analytics } from '@/components/common/analytics';
 
 export const metadata: Metadata = {
-  title: 'EduVerse - Your Universe of Learning',
-  description: 'A comprehensive online learning platform by EduVerse.',
+  title: 'TeachMe - Your Universe of Learning',
+  description: 'A comprehensive online learning platform by TeachMe.',
 };
 
 export default function RootLayout({

@@ -10,7 +10,7 @@ export default async function Home() {
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold font-headline tracking-tight">Welcome to Your Universe of Learning</h1>
         <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-          Explore a wide range of subjects, master new skills, and track your progress. Start your learning journey with EduVerse today.
+          Explore a wide range of subjects, master new skills, and track your progress. Start your learning journey with TeachMe today.
         </p>
       </div>
 
