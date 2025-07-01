@@ -5,7 +5,8 @@ import { ArrowLeft, ChevronRight } from 'lucide-react';
 import { AiSummary } from '@/components/ai-summary';
 import { Separator } from '@/components/ui/separator';
 
-export default async function LessonPage({ params }: { params: { courseId: string, lessonId: string } }) {
+export default async function LessonPage(props: { params: Promise<{ courseId: string, lessonId: string }> }) {
+  const params = await props.params;
   const lesson = await getLessonById(params.courseId, params.lessonId);
 
   if (!lesson) {

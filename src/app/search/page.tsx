@@ -5,11 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { Search } from 'lucide-react';
 
-export default async function SearchPage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
+export default async function SearchPage(
+  props: {
+    searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const query = typeof searchParams?.q === 'string' ? searchParams.q : '';
   const allCourses = await getAllCourses();
 

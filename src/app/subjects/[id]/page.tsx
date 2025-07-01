@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
 
-export default async function SubjectPage({ params }: { params: { id: string } }) {
+export default async function SubjectPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const subject = await getSubjectById(params.id);
   const coursesInSubject = await getCoursesBySubject(params.id);
 

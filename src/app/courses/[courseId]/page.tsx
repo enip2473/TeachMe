@@ -7,15 +7,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, use } from 'react';
 import { ArrowLeft, CheckCircle2, ChevronRight, FileText } from 'lucide-react';
 import Image from 'next/image';
 import { Course } from '@/lib/types';
 
-export default function CoursePage({ params }: { params: { courseId: string } }) {
+export default function CoursePage(props: { params: Promise<{ courseId: string }> }) {
+  const params = use(props.params);
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     const fetchCourse = async () => {
       const courseData = await getCourseById(params.courseId);
@@ -26,7 +27,7 @@ export default function CoursePage({ params }: { params: { courseId: string } })
   }, [params.courseId]);
 
   const totalLessons = useMemo(() => course?.modules.reduce((acc, module) => acc + module.lessons.length, 0) || 0, [course]);
-  
+
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
 
   if (loading) {
