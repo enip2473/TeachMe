@@ -1,8 +1,10 @@
-import { subjects } from '@/lib/data';
+import { getSubjects } from '@/lib/data';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 
-export default function Home() {
+export default async function Home() {
+  const subjects = await getSubjects();
+
   return (
     <div className="container py-8">
       <div className="text-center mb-12">
@@ -17,9 +19,6 @@ export default function Home() {
           <Link href={`/subjects/${subject.id}`} key={subject.id} className="group">
             <Card className="h-full hover:border-primary transition-colors duration-300 transform hover:-translate-y-1 hover:shadow-xl">
               <CardHeader className="flex-row items-center gap-4">
-                <div className="p-3 bg-primary/10 rounded-lg">
-                  <subject.icon className="w-8 h-8 text-primary" />
-                </div>
                 <div>
                   <CardTitle className="font-headline text-xl">{subject.name}</CardTitle>
                   <CardDescription className="mt-1">{subject.description}</CardDescription>

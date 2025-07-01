@@ -5,8 +5,8 @@ import { ArrowLeft, ChevronRight } from 'lucide-react';
 import { AiSummary } from '@/components/ai-summary';
 import { Separator } from '@/components/ui/separator';
 
-export default function LessonPage({ params }: { params: { courseId: string, lessonId: string } }) {
-  const lesson = getLessonById(params.courseId, params.lessonId);
+export default async function LessonPage({ params }: { params: { courseId: string, lessonId: string } }) {
+  const lesson = await getLessonById(params.courseId, params.lessonId);
 
   if (!lesson) {
     notFound();

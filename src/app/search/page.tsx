@@ -11,7 +11,7 @@ export default async function SearchPage({
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   const query = typeof searchParams?.q === 'string' ? searchParams.q : '';
-  const allCourses = getAllCourses();
+  const allCourses = await getAllCourses();
 
   const filteredCourses = allCourses.filter(course => 
     course.title.toLowerCase().includes(query.toLowerCase()) ||

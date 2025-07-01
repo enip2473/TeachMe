@@ -6,9 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
 
-export default function SubjectPage({ params }: { params: { id: string } }) {
-  const subject = getSubjectById(params.id);
-  const coursesInSubject = getCoursesBySubject(params.id);
+export default async function SubjectPage({ params }: { params: { id: string } }) {
+  const subject = await getSubjectById(params.id);
+  const coursesInSubject = await getCoursesBySubject(params.id);
 
   if (!subject) {
     notFound();
@@ -21,9 +21,6 @@ export default function SubjectPage({ params }: { params: { id: string } }) {
         Back to Subjects
       </Link>
       <div className="flex items-center gap-4 mb-8">
-        <div className="p-3 bg-primary/10 rounded-lg">
-           <subject.icon className="w-10 h-10 text-primary" />
-        </div>
         <div>
             <h1 className="text-4xl font-bold font-headline">{subject.name}</h1>
             <p className="text-muted-foreground">{subject.description}</p>

@@ -1,97 +1,52 @@
-import type { Subject, Course } from '@/lib/types';
-import { BookOpen, Code, Calculator, Languages } from 'lucide-react';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from './firebase';
+import type { Subject, Course, Lesson, Module } from '@/lib/types';
 
-export const subjects: Subject[] = [
-  {
-    id: 'english',
-    name: 'English',
-    description: 'Improve your language and communication skills.',
-    icon: BookOpen,
-  },
-  {
-    id: 'japanese',
-    name: 'Japanese',
-    description: 'Learn the Japanese language and culture.',
-    icon: Languages,
-  },
-  {
-    id: 'programming',
-    name: 'Programming',
-    description: 'Learn to build software, websites, and applications with code.',
-    icon: Code,
-  },
-  {
-    id: 'math',
-    name: 'Math',
-    description: 'Master the language of the universe through numbers and logic.',
-    icon: Calculator,
-  },
-];
+export const getSubjects = async (): Promise<Subject[]> => {
+  const subjectsCollection = collection(db, 'subjects');
+  const snapshot = await getDocs(subjectsCollection);
+  return snapshot.docs.map(doc => doc.data() as Subject);
+};
 
-export const courses: Course[] = [
-  {
-    id: 'intro-to-react',
-    title: 'Introduction to React',
-    description: 'Learn the fundamentals of the most popular JavaScript library for building user interfaces.',
-    subject: 'programming',
-    difficulty: 'Beginner',
-    image: 'https://placehold.co/600x400.png',
-    modules: [
-      {
-        id: 'm1',
-        title: 'Module 1: Getting Started',
-        lessons: [
-          { id: 'l1', title: 'What is React?', content: 'React is a free and open-source front-end JavaScript library for building user interfaces based on UI components. It is maintained by Meta and a community of individual developers and companies. React can be used as a base in the development of single-page or mobile applications. However, React is only concerned with state management and rendering that state to the DOM, so creating React applications usually requires the use of additional libraries for routing, as well as certain client-side functionality.' },
-          { id: 'l2', title: 'Components, Props, and State', content: 'React is built around the concept of reusable components. You define small components and then put them together to form bigger components. All components, small or large, are reusable, even across different projects. Props (short for "properties") are read-only attributes that are passed to components. State is a plain JavaScript object used by React to represent an information about the component\'s current situation.' },
-        ],
-      },
-      {
-        id: 'm2',
-        title: 'Module 2: Hooks',
-        lessons: [
-          { id: 'l3', title: 'useState Hook', content: 'The useState hook is a special function that lets you add React state to function components. It returns a pair: the current state value and a function that lets you update it. You can call this function from an event handler or somewhere else to update the state.' },
-          { id: 'l4', title: 'useEffect Hook', content: 'The Effect Hook, useEffect, lets you perform side effects in function components. Data fetching, setting up a subscription, and manually changing the DOM in React components are all examples of side effects. useEffect runs after every render, including the first one.' },
-        ],
-      },
-    ],
-  },
-   {
-    id: 'calculus-i',
-    title: 'Calculus I',
-    description: 'Explore limits, derivatives, and the fundamentals of calculus.',
-    subject: 'math',
-    difficulty: 'Intermediate',
-    image: 'https://placehold.co/600x400.png',
-    modules: [
-      {
-        id: 'm1',
-        title: 'Module 1: Limits and Continuity',
-        lessons: [
-          { id: 'l1', title: 'Introduction to Limits', content: 'In mathematics, a limit is the value that a function (or sequence) "approaches" as the input "approaches" some value. Limits are essential to calculus and mathematical analysis, and are used to define continuity, derivatives, and integrals.' },
-          { id: 'l2', title: 'Continuity', content: 'In mathematics, a continuous function is a function for which, intuitively, "small" changes in the input result in "small" changes in the output. A function that is not continuous is said to be discontinuous.' },
-        ],
-      },
-      {
-        id: 'm2',
-        title: 'Module 2: Derivatives',
-        lessons: [
-          { id: 'l3', title: 'The Derivative and the Tangent Line Problem', content: 'The derivative of a function of a real variable measures the sensitivity to change of the function value (output value) with respect to a change in its argument (input value). The derivative is a fundamental tool of calculus.' },
-        ],
-      },
-    ],
-  },
-];
-
-export const getSubjectById = (id: string) => subjects.find(s => s.id === id);
-export const getCoursesBySubject = (subjectId: string) => courses.filter(c => c.subject === subjectId);
-export const getCourseById = (id: string) => courses.find(c => c.id === id);
-export const getAllCourses = () => courses;
-export const getLessonById = (courseId: string, lessonId: string) => {
-    const course = getCourseById(courseId);
-    if (!course) return null;
-    for (const module of course.modules) {
-        const lesson = module.lessons.find(l => l.id === lessonId);
-        if (lesson) return { ...lesson, courseTitle: course.title, courseId: course.id };
-    }
+export const getSubjectById = async (id: string): Promise<Subject | null> => {
+  const q = query(collection(db, 'subjects'), where('id', '==', id));
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) {
     return null;
-}
+  }
+  return snapshot.docs[0].data() as Subject;
+};
+
+export const getCoursesBySubject = async (subjectId: string): Promise<Course[]> => {
+  const q = query(collection(db, 'courses'), where('subject', '==', subjectId));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => doc.data() as Course);
+};
+
+export const getCourseById = async (id: string): Promise<Course | null> => {
+  const q = query(collection(db, 'courses'), where('id', '==', id));
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) {
+    return null;
+  }
+  return snapshot.docs[0].data() as Course;
+};
+
+export const getAllCourses = async (): Promise<Course[]> => {
+  const coursesCollection = collection(db, 'courses');
+  const snapshot = await getDocs(coursesCollection);
+  return snapshot.docs.map(doc => doc.data() as Course);
+};
+
+export const getLessonById = async (courseId: string, lessonId: string): Promise<(Lesson & { courseTitle: string; courseId: string }) | null> => {
+  const course = await getCourseById(courseId);
+  if (!course) return null;
+  for (const module of course.modules) {
+    const lesson = module.lessons.find(l => l.id === lessonId);
+    if (lesson) {
+      return { ...lesson, courseTitle: course.title, courseId: course.id };
+    }
+  }
+  return null;
+};
+

@@ -1,7 +1,7 @@
 
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, isSupported } from 'firebase/analytics'; // Import isSupported
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -21,7 +21,18 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const analytics = getAnalytics(app);
-const db = getFirestore(app);
+let analytics;
+// Conditionally initialize Analytics only if running in a browser and supported
+if (typeof window !== 'undefined') {
+  // Check if window is defined (i.e., we are in a browser environment)
+  isSupported().then(supported => {
+    if (supported) {
+      analytics = getAnalytics(app);
+    } else {
+      console.warn("Firebase Analytics is not supported in this environment.");
+    }
+  });
+}
+const db = getFirestore(app, 'default');
 
 export { app, analytics, db };
