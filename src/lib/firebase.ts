@@ -20,18 +20,6 @@ const firebaseConfig = {
 // Initialize Firebase
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-let analytics;
-// Conditionally initialize Analytics only if running in a browser and supported
-if (typeof window !== 'undefined') {
-  // Check if window is defined (i.e., we are in a browser environment)
-  isSupported().then(supported => {
-    if (supported) {
-      analytics = getAnalytics(app);
-    } else {
-      console.warn("Firebase Analytics is not supported in this environment.");
-    }
-  });
-}
 const db = getFirestore(app, 'default');
-
-export { app, analytics, db };
+const analytics = isSupported().then(yes => yes ? getAnalytics(app) : null);
+export { app, db, analytics };
