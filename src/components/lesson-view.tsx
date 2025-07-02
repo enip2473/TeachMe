@@ -1,12 +1,11 @@
 'use client';
 
-import { notFound, useRouter } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, ChevronRight } from 'lucide-react';
 import { AiSummary } from '@/components/ai-summary';
 import { Separator } from '@/components/ui/separator';
 import { useAuthContext } from '@/hooks/use-auth-context';
-import { useEffect } from 'react';
 import { Lesson } from '@/lib/types';
 
 type LessonViewProps = {
@@ -15,16 +14,9 @@ type LessonViewProps = {
 
 export function LessonView({ lesson }: LessonViewProps) {
   const { user } = useAuthContext();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!user) {
-      router.push('/signin');
-    }
-  }, [user, router]);
 
   if (!user) {
-    return <div>Loading...</div>;
+    return <div>Please sign in to view this lesson.</div>;
   }
 
   if (!lesson) {

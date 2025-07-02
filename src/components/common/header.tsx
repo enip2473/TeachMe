@@ -5,15 +5,19 @@ import { Logo } from '@/components/common/logo';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuthContext } from '@/hooks/use-auth-context';
-import { getAuth, signOut } from 'firebase/auth';
-import Link from 'next/link';
+import { getAuth, signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 export function Header() {
   const { user } = useAuthContext();
   const auth = getAuth();
+  const provider = new GoogleAuthProvider();
 
   const handleSignOut = async () => {
     await signOut(auth);
+  };
+
+  const handleSignIn = async () => {
+    await signInWithPopup(auth, provider);
   };
 
   return (
@@ -50,9 +54,7 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild>
-                <Link href="/signin">Log in</Link>
-              </Button>
+              <Button onClick={handleSignIn}>Log in</Button>
             )}
           </nav>
         </div>
