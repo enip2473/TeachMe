@@ -1,9 +1,13 @@
 import type { LucideIcon } from "lucide-react";
 
+export type UserRole = 'Student' | 'Lecturer' | 'Admin';
+
 export interface Lesson {
   id: string;
   title: string;
   content: string;
+  courseId?: string;
+  courseTitle?: string;
 }
 
 export interface Module {

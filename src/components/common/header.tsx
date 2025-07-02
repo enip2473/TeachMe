@@ -40,7 +40,7 @@ export function Header() {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">Student</p>
+                      <p className="text-sm font-medium leading-none">{user.role}</p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user.email}
                       </p>
@@ -49,6 +49,12 @@ export function Header() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem>My Courses</DropdownMenuItem>
+                  {user.role === 'Lecturer' && (
+                    <DropdownMenuItem>Lecturer Dashboard</DropdownMenuItem>
+                  )}
+                  {user.role === 'Admin' && (
+                    <DropdownMenuItem>Admin Dashboard</DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>Log out</DropdownMenuItem>
                 </DropdownMenuContent>
