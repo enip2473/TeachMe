@@ -8,14 +8,17 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { useState, useMemo, useEffect, use } from 'react';
-import { ArrowLeft, CheckCircle2, ChevronRight, FileText } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ChevronRight, FileText, Edit } from 'lucide-react';
 import Image from 'next/image';
 import { Course } from '@/lib/types';
+import { useAuthContext } from '@/hooks/use-auth-context';
+import { Button } from '@/components/ui/button';
 
 export default function CoursePage(props: { params: Promise<{ courseId: string }> }) {
   const params = use(props.params);
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuthContext();
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -51,6 +54,7 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
   };
 
   const progressPercentage = totalLessons > 0 ? (completedLessons.size / totalLessons) * 100 : 0;
+  const isOwner = user?.uid === course.ownerId;
 
   return (
     <div className="container py-8">
@@ -109,18 +113,22 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
           </Accordion>
         </div>
 
-        <div className="md:col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-headline">Your Progress</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Progress value={progressPercentage} className="mb-2" />
-              <p className="text-center text-sm text-muted-foreground">
-                {completedLessons.size} of {totalLessons} lessons completed ({Math.round(progressPercentage)}%)
-              </p>
-            </CardContent>
-          </Card>
+        <div className="md:col-span-1 space-y-4">
+          {isOwner && (
+            <Button asChild className="w-full">
+              <Link href={`/courses/${course.id}/edit`}>
+                <Edit className="mr-2 h-4 w-4" />
+                Edit Lessons
+              </Link>
+            </Button>
+          )}
+          {!isOwner && course.modules[0]?.lessons[0] && (
+            <Button asChild className="w-full">
+              <Link href={`/courses/${course.id}/lessons/${course.modules[0].lessons[0].id}`}>
+                Start Learning
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
     </div>

@@ -40,7 +40,7 @@ export default async function SearchPage(
               <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-primary">
                 <CardHeader className="p-0">
                   <Image
-                    src={course.image}
+                    src={course.image || 'https://placehold.co/600x400'}
                     alt={course.title}
                     width={600}
                     height={400}

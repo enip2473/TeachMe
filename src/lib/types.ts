@@ -23,7 +23,7 @@ export interface Course {
   subject: string;
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
   modules: Module[];
-  image: string;
+  image?: string;
   ownerId: string;
 }
 
