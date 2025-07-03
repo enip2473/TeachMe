@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
+import AddLectureButton from '@/components/add-lecture-button';
 
 export default async function SubjectPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -21,11 +22,12 @@ export default async function SubjectPage(props: { params: Promise<{ id: string 
         <ArrowLeft className="w-4 h-4" />
         Back to Subjects
       </Link>
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex items-center justify-between gap-4 mb-8">
         <div>
             <h1 className="text-4xl font-bold font-headline">{subject.name}</h1>
             <p className="text-muted-foreground">{subject.description}</p>
         </div>
+        <AddLectureButton subjectId={params.id} />
       </div>
 
       {coursesInSubject.length > 0 ? (
