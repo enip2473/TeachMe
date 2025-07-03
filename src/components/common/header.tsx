@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuthContext } from '@/hooks/use-auth-context';
 import { getAuth, signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import Link from 'next/link';
 
 export function Header() {
   const { user } = useAuthContext();
@@ -50,10 +51,23 @@ export function Header() {
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem>My Courses</DropdownMenuItem>
                   {user.role === 'Lecturer' && (
-                    <DropdownMenuItem>Lecturer Dashboard</DropdownMenuItem>
+                    <>
+                      <DropdownMenuItem>Lecturer Dashboard</DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Link href="/lecturer/courses/new">Create New Course</Link>
+                      </DropdownMenuItem>
+                    </>
                   )}
                   {user.role === 'Admin' && (
-                    <DropdownMenuItem>Admin Dashboard</DropdownMenuItem>
+                    <>
+                      <DropdownMenuItem>Admin Dashboard</DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Link href="/admin/subjects/new">Create New Subject</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Link href="/lecturer/courses/new">Create New Course</Link>
+                      </DropdownMenuItem>
+                    </>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>Log out</DropdownMenuItem>

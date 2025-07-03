@@ -2,26 +2,30 @@
 
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Edit } from 'lucide-react';
 import { AiSummary } from '@/components/ai-summary';
 import { Separator } from '@/components/ui/separator';
 import { useAuthContext } from '@/hooks/use-auth-context';
-import { Lesson } from '@/lib/types';
+import { Lesson, Course } from '@/lib/types';
+import { Button } from '@/components/ui/button';
 
 type LessonViewProps = {
   lesson: (Lesson & { courseTitle: string; courseId: string }) | null;
+  course: Course | null;
 };
 
-export function LessonView({ lesson }: LessonViewProps) {
+export function LessonView({ lesson, course }: LessonViewProps) {
   const { user } = useAuthContext();
 
   if (!user) {
     return <div>Please sign in to view this lesson.</div>;
   }
 
-  if (!lesson) {
+  if (!lesson || !course) {
     return notFound();
   }
+
+  const canEdit = user.uid === course.ownerId || user.role === 'Admin';
 
   return (
     <div className="container max-w-4xl mx-auto py-8">
@@ -45,6 +49,16 @@ export function LessonView({ lesson }: LessonViewProps) {
       </article>
 
       <Separator className="my-12" />
+
+      {canEdit && (
+        <div className="flex justify-end">
+          <Link href={`/courses/${course.id}/lessons/${lesson.id}/edit`}>
+            <Button variant="outline">
+              <Edit className="mr-2 h-4 w-4" /> Edit Lesson
+            </Button>
+          </Link>
+        </div>
+      )}
 
       <AiSummary lessonContent={lesson.content} />
     </div>

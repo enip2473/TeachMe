@@ -24,6 +24,7 @@ export interface Course {
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
   modules: Module[];
   image: string;
+  ownerId: string;
 }
 
 export interface Subject {

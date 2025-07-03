@@ -62,7 +62,7 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
         <div className="md:col-span-2">
           <Card className="overflow-hidden mb-8">
              <Image
-                src={course.image}
+                src={course.image || 'https://placehold.co/800x450'}
                 alt={course.title}
                 width={800}
                 height={450}
