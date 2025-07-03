@@ -69,28 +69,9 @@ export const addCourse = async (course: Omit<Course, 'id' | 'modules'> & { modul
   await addDoc(collection(db, 'courses'), newCourse);
 };
 
-export const updateLesson = async (courseId: string, lessonId: string, title: string, content: string): Promise<void> => {
-  const course = await getCourseById(courseId);
-  if (!course) {
-    throw new Error('Course not found');
-  }
 
-  let lessonFound = false;
-  const updatedModules = course.modules.map(module => ({
-    ...module,
-    lessons: module.lessons.map(lesson => {
-      if (lesson.id === lessonId) {
-        lessonFound = true;
-        return { ...lesson, title, content };
-      }
-      return lesson;
-    }),
-  }));
 
-  if (!lessonFound) {
-    throw new Error('Lesson not found in course');
-  }
-
+export const updateCourse = async (courseId: string, course: Course): Promise<void> => {
   const courseDocRef = doc(db, 'courses', courseId);
-  await updateDoc(courseDocRef, { modules: updatedModules });
+  await updateDoc(courseDocRef, { ...course });
 };

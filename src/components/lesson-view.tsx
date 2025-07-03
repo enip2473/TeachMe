@@ -3,7 +3,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, ChevronRight, Edit } from 'lucide-react';
-import { AiSummary } from '@/components/ai-summary';
 import { Separator } from '@/components/ui/separator';
 import { useAuthContext } from '@/hooks/use-auth-context';
 import { Lesson, Course } from '@/lib/types';
@@ -25,7 +24,7 @@ export function LessonView({ lesson, course }: LessonViewProps) {
     return notFound();
   }
 
-  const canEdit = user.uid === course.ownerId || user.role === 'Admin';
+  const canEdit = user.uid === course.ownerId;
 
   return (
     <div className="container max-w-4xl mx-auto py-8">
@@ -43,6 +42,7 @@ export function LessonView({ lesson, course }: LessonViewProps) {
 
       <article className="prose prose-lg dark:prose-invert max-w-none">
         <h1 className="font-headline">{lesson.title}</h1>
+        {lesson.summary && <p className="lead">{lesson.summary}</p>}
         {lesson.content.split('\n').map((paragraph, index) => (
             <p key={index}>{paragraph}</p>
         ))}
@@ -52,15 +52,13 @@ export function LessonView({ lesson, course }: LessonViewProps) {
 
       {canEdit && (
         <div className="flex justify-end">
-          <Link href={`/courses/${course.id}/lessons/${lesson.id}/edit`}>
+          <Link href={`/courses/${course.id}/edit`}>
             <Button variant="outline">
-              <Edit className="mr-2 h-4 w-4" /> Edit Lesson
+              <Edit className="mr-2 h-4 w-4" /> Edit Course Lessons
             </Button>
           </Link>
         </div>
       )}
-
-      <AiSummary lessonContent={lesson.content} />
     </div>
   );
 }

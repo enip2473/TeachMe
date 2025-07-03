@@ -5,6 +5,7 @@ export type UserRole = 'Student' | 'Lecturer' | 'Admin';
 export interface Lesson {
   id: string;
   title: string;
+  summary: string;
   content: string;
   courseId?: string;
   courseTitle?: string;

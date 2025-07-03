@@ -26,6 +26,13 @@ Users are assigned one of the following roles upon their first login:
 *   `src/ai`: AI-related code, including Genkit flows.
 *   `src/hooks`: Custom React hooks, including authentication context.
 
+### Content Hierarchy
+
+*   **Subjects:** Broad categories (e.g., "Mathematics", "History").
+*   **Courses:** Specific learning paths within a subject.
+*   **Modules:** Sections within a course, grouping related lessons.
+*   **Lessons:** Individual learning units within a module.
+
 ### Development
 
 *   **Run development server:** `npm run dev`
