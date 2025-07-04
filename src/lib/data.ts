@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where, addDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where, addDoc, doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Subject, Course, Lesson, Module } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,12 +25,12 @@ export const getCoursesBySubject = async (subjectId: string): Promise<Course[]> 
 };
 
 export const getCourseById = async (id: string): Promise<Course | null> => {
-  const q = query(collection(db, 'courses'), where('id', '==', id));
-  const snapshot = await getDocs(q);
-  if (snapshot.empty) {
-    return null;
+  const courseDocRef = doc(db, 'courses', id);
+  const docSnap = await getDoc(courseDocRef);
+  if (docSnap.exists()) {
+    return docSnap.data() as Course;
   }
-  return snapshot.docs[0].data() as Course;
+  return null;
 };
 
 export const getAllCourses = async (): Promise<Course[]> => {
@@ -60,13 +60,9 @@ export const addSubject = async (name: string, description: string): Promise<voi
   await addDoc(collection(db, 'subjects'), newSubject);
 };
 
-export const addCourse = async (course: Omit<Course, 'id' | 'modules'> & { modules?: Module[] }): Promise<void> => {
-  const newCourse: Course = {
-    id: uuidv4(),
-    modules: [],
-    ...course,
-  };
-  await addDoc(collection(db, 'courses'), newCourse);
+export const addCourse = async (course: Course): Promise<void> => {
+  const courseDocRef = doc(db, 'courses', course.id);
+  await setDoc(courseDocRef, course);
 };
 
 
@@ -74,4 +70,23 @@ export const addCourse = async (course: Omit<Course, 'id' | 'modules'> & { modul
 export const updateCourse = async (courseId: string, course: Course): Promise<void> => {
   const courseDocRef = doc(db, 'courses', courseId);
   await updateDoc(courseDocRef, { ...course });
+};
+
+export const updateLesson = async (courseId: string, lessonId: string, lesson: Lesson): Promise<void> => {
+  const course = await getCourseById(courseId);
+  if (!course) {
+    throw new Error('Course not found');
+  }
+
+  const updatedModules = course.modules.map(module => {
+    const lessonIndex = module.lessons.findIndex(l => l.id === lessonId);
+    if (lessonIndex !== -1) {
+      const updatedLessons = [...module.lessons];
+      updatedLessons[lessonIndex] = lesson;
+      return { ...module, lessons: updatedLessons };
+    }
+    return module;
+  });
+
+  await updateCourse(courseId, { ...course, modules: updatedModules });
 };

@@ -9,8 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { v4 as uuidv4 } from 'uuid';
+import Link from 'next/link';
+import { Pen, ArrowLeft } from 'lucide-react';
 
 export default function EditCoursePage(props: { params: Promise<{ courseId: string }> }) {
   const params = use(props.params);
@@ -28,7 +30,23 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
     fetchCourse();
   }, [params.courseId]);
 
-  const handleLessonChange = (moduleId: string, lessonId: string, field: keyof Lesson, value: string) => {
+  const handleCourseChange = (field: keyof Course, value: string) => {
+    if (!course) return;
+    setCourse({ ...course, [field]: value });
+  };
+
+  const handleModuleChange = (moduleId: string, value: string) => {
+    if (!course) return;
+    const updatedModules = course.modules.map(module => {
+      if (module.id === moduleId) {
+        return { ...module, title: value };
+      }
+      return module;
+    });
+    setCourse({ ...course, modules: updatedModules });
+  };
+
+  const handleLessonChange = (moduleId: string, lessonId: string, field: keyof Lesson, value: string) => {""
     if (!course) return;
     const updatedModules = course.modules.map(module => {
       if (module.id === moduleId) {
@@ -141,6 +159,7 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
       await updateCourse(course.id, course);
       toast({ title: "Success", description: "Course updated successfully." });
     } catch (error) {
+      console.error("Failed to update course:", error);
       toast({ title: "Error", description: "Failed to update course.", variant: "destructive" });
     }
   };
@@ -156,8 +175,32 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
   return (
     <div className="container py-8">
       <div className="flex justify-between items-center mb-6">
+        <Link href={`/courses/${course.id}`}>
+          <Button variant="outline" size="icon">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        </Link>
         <h1 className="text-3xl font-bold font-headline">Edit: {course.title}</h1>
         <Button onClick={handleSaveChanges}>Save Changes</Button>
+      </div>
+
+      <div className="space-y-4 mb-8">
+        <Input
+          value={course.title}
+          onChange={e => handleCourseChange('title', e.target.value)}
+          className="text-2xl font-bold"
+        />
+        <Textarea
+          value={course.description}
+          onChange={e => handleCourseChange('description', e.target.value)}
+          placeholder="Course Description"
+          rows={4}
+        />
+        <Input
+          value={course.image}
+          onChange={e => handleCourseChange('image', e.target.value)}
+          placeholder="Course Image URL"
+        />
       </div>
 
       <DragDropContext onDragEnd={handleDragEnd}>
@@ -177,7 +220,12 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
                       {(provided) => (
                         <div ref={provided.innerRef} {...provided.draggableProps} className="p-4 border rounded-lg">
                           <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-2xl font-bold" {...provided.dragHandleProps}>{module.title}</h2>
+                            <Input
+                              value={module.title}
+                              onChange={e => handleModuleChange(module.id, e.target.value)}
+                              className="text-2xl font-bold"
+                              {...provided.dragHandleProps}
+                            />
                             <Button variant="destructive" size="sm" onClick={() => handleDeleteModule(module.id)}>Delete Module</Button>
                           </div>
                           <Droppable droppableId={module.id} type="lesson">
@@ -187,26 +235,15 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
                                   <Draggable key={lesson.id} draggableId={lesson.id} index={lessonIndex}>
                                     {(provided) => (
                                       <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="p-4 border rounded-lg bg-background flex justify-between items-center">
-                                        <div className="space-y-2 flex-grow">
-                                          <Input
-                                            value={lesson.title}
-                                            onChange={e => handleLessonChange(module.id, lesson.id, 'title', e.target.value)}
-                                            className="text-lg font-semibold"
-                                          />
-                                          <Textarea
-                                            value={lesson.summary}
-                                            onChange={e => handleLessonChange(module.id, lesson.id, 'summary', e.target.value)}
-                                            placeholder="Lesson Summary"
-                                            rows={2}
-                                          />
-                                          <Textarea
-                                            value={lesson.content}
-                                            onChange={e => handleLessonChange(module.id, lesson.id, 'content', e.target.value)}
-                                            placeholder="Lesson Content (Markdown)"
-                                            rows={8}
-                                          />
+                                        <span className="font-semibold">{lesson.title}</span>
+                                        <div className="flex items-center space-x-2">
+                                          <Link href={`/courses/${course.id}/lessons/${lesson.id}/edit`}>
+                                            <Button variant="outline" size="icon">
+                                              <Pen className="h-4 w-4" />
+                                            </Button>
+                                          </Link>
+                                          <Button variant="destructive" size="sm" onClick={() => handleDeleteLesson(module.id, lesson.id)}>Delete</Button>
                                         </div>
-                                        <Button variant="destructive" size="sm" onClick={() => handleDeleteLesson(module.id, lesson.id)} className="ml-4">Delete Lesson</Button>
                                       </div>
                                     )}
                                   </Draggable>

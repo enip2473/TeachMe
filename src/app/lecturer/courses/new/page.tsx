@@ -13,7 +13,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { addCourse, getSubjects } from '@/lib/data'; // We will create addCourse and use getSubjects
 import { useToast } from '@/hooks/use-toast';
-import { Subject } from '@/lib/types';
+import { Course, Subject } from '@/lib/types';
+import { v4 as uuidv4 } from 'uuid';
 
 const formSchema = z.object({
   title: z.string().min(2, { message: 'Course title must be at least 2 characters.' }),
@@ -63,13 +64,22 @@ export default function NewCoursePage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!user) return;
+
+    const courseId = uuidv4();
+    const newCourse: Course = {
+      id: courseId,
+      ...values,
+      ownerId: user.uid,
+      modules: [],
+    };
+
     try {
-      await addCourse({ ...values, ownerId: user.uid });
+      await addCourse(newCourse);
       toast({
         title: 'Course Created',
         description: `Course "${values.title}" has been successfully created.`,
       });
-      form.reset();
+      router.push(`/courses/${courseId}/edit`);
     } catch (error) {
       console.error('Error creating course:', error);
       toast({
