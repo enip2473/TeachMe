@@ -65,14 +65,16 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2">
           <Card className="overflow-hidden mb-8">
-             <Image
-                src={course.image || 'https://placehold.co/800x450'}
-                alt={course.title}
-                width={800}
-                height={450}
-                className="w-full object-cover"
-                data-ai-hint="education technology"
-              />
+             <div className="max-h-96 overflow-hidden">
+               <Image
+                  src={course.image || 'https://placehold.co/600x338'}
+                  alt={course.title}
+                  width={600}
+                  height={338}
+                  className="w-full object-cover"
+                  data-ai-hint="education technology"
+                />
+              </div>
             <CardHeader>
               <CardTitle className="text-3xl font-headline">{course.title}</CardTitle>
               <CardDescription className="text-base">{course.description}</CardDescription>
