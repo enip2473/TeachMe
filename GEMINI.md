@@ -8,7 +8,8 @@ This is a Next.js project for an educational platform called "TeachMe".
 *   **AI:** Genkit
 *   **Package Manager:** npm
 *   **Authentication:** Firebase Authentication (Google Provider)
-*   **Database:** Firestore (for user roles)
+*   **Database:** Firestore (for user roles and lesson metadata)
+*   **Storage:** Firebase Storage (for lesson content in Markdown format)
 
 ### User Roles
 
@@ -31,7 +32,7 @@ Users are assigned one of the following roles upon their first login:
 *   **Subjects:** Broad categories (e.g., "Mathematics", "History").
 *   **Courses:** Specific learning paths within a subject.
 *   **Modules:** Sections within a course, grouping related lessons.
-*   **Lessons:** Individual learning units within a module.
+*   **Lessons:** Individual learning units within a module. Lesson content is written in Markdown and rendered in the UI.
 
 ### Development
 

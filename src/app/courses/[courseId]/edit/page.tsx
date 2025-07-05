@@ -79,7 +79,7 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
     setCourse({ ...course, modules: updatedModules });
   };
 
-  const handleAddLesson = (moduleId: string) => {
+  const handleAddLesson = async (moduleId: string) => {
     if (!course) return;
     const newLesson: Lesson = {
       id: uuidv4(),
@@ -93,7 +93,15 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
       }
       return module;
     });
-    setCourse({ ...course, modules: updatedModules });
+    const updatedCourse = { ...course, modules: updatedModules };
+    try {
+      await updateCourse(course.id, updatedCourse);
+      setCourse(updatedCourse);
+      toast({ title: "Success", description: "Lesson added successfully." });
+    } catch (error) {
+      console.error("Failed to add lesson:", error);
+      toast({ title: "Error", description: "Failed to add lesson.", variant: "destructive" });
+    }
   };
 
   const handleDeleteLesson = (moduleId: string, lessonId: string) => {

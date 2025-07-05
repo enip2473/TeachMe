@@ -32,7 +32,7 @@ This project uses Firebase Authentication with Google as a provider. Users are a
 *   [TypeScript](https://www.typescriptlang.org/) - Typed JavaScript
 *   [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 *   [Genkit](https://firebase.google.com/docs/genkit) - AI integration
-*   [Firebase](https://firebase.google.com/) - Authentication and Firestore for user roles.
+*   [Firebase](https://firebase.google.com/) - Authentication, Firestore for metadata, and Storage for content.
 
 ## Content Hierarchy
 
@@ -41,7 +41,7 @@ The educational content is organized in a hierarchical structure:
 *   **Subjects:** Broad categories (e.g., "Mathematics", "History").
 *   **Courses:** Specific learning paths within a subject.
 *   **Modules:** Sections within a course, grouping related lessons.
-*   **Lessons:** Individual learning units within a module.
+*   **Lessons:** Individual learning units within a module. Lesson content is written in Markdown.
 
 ## Project Structure
 

@@ -8,14 +8,34 @@ import { useAuthContext } from '@/hooks/use-auth-context';
 import { Lesson, Course } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { MarkdownRenderer } from '@/components/markdown-renderer';
+import { useEffect, useState } from 'react';
 
 type LessonViewProps = {
   lesson: (Lesson & { courseTitle: string; courseId: string }) | null;
   course: Course | null;
 };
 
-export function LessonView({ lesson, course }: LessonViewProps) {
+export function LessonView({ lesson, course }: LessonViewProps){
   const { user } = useAuthContext();
+  const [content, setContent] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!lesson?.content) return;
+    const fetchContent = async () => {
+      try {
+        const response = await fetch(lesson.content);
+        const text = await response.text();
+        setContent(text);
+      } catch (error) {
+        console.error('Failed to fetch lesson content:', error);
+        setContent('# Error\n\nCould not load lesson content.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContent();
+  }, [lesson?.content]);
 
   if (!user) {
     return <div>Please sign in to view this lesson.</div>;
@@ -47,7 +67,7 @@ export function LessonView({ lesson, course }: LessonViewProps) {
       </div>
 
       <article className="prose prose-lg dark:prose-invert max-w-none">
-        <MarkdownRenderer content={lesson.content} />
+        {loading ? <p>Loading...</p> : <MarkdownRenderer content={content} />}
       </article>
 
       <Separator className="my-12" />

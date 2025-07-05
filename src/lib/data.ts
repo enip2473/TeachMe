@@ -1,5 +1,6 @@
 import { collection, getDocs, query, where, addDoc, doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
-import { db } from './firebase';
+import { ref, uploadString, getDownloadURL } from 'firebase/storage';
+import { db, storage } from './firebase';
 import type { Subject, Course, Lesson, Module } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -78,11 +79,16 @@ export const updateLesson = async (courseId: string, lessonId: string, lesson: L
     throw new Error('Course not found');
   }
 
+  // Upload content to Firebase Storage
+  const storageRef = ref(storage, `lessons/${courseId}/${lessonId}.md`);
+  await uploadString(storageRef, lesson.content, 'raw');
+  const contentUrl = await getDownloadURL(storageRef);
+
   const updatedModules = course.modules.map(module => {
     const lessonIndex = module.lessons.findIndex(l => l.id === lessonId);
     if (lessonIndex !== -1) {
       const updatedLessons = [...module.lessons];
-      updatedLessons[lessonIndex] = lesson;
+      updatedLessons[lessonIndex] = { ...lesson, content: contentUrl };
       return { ...module, lessons: updatedLessons };
     }
     return module;
