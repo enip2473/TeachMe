@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { useAuthContext } from '@/hooks/use-auth-context';
 import { Lesson, Course } from '@/lib/types';
 import { Button } from '@/components/ui/button';
+import { MarkdownRenderer } from '@/components/markdown-renderer';
 
 type LessonViewProps = {
   lesson: (Lesson & { courseTitle: string; courseId: string }) | null;
@@ -40,12 +41,13 @@ export function LessonView({ lesson, course }: LessonViewProps) {
         </div>
       </div>
 
+      <div className="space-y-2 mb-8">
+        <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">{lesson.title}</h1>
+        {lesson.summary && <p className="text-lg text-muted-foreground">{lesson.summary}</p>}
+      </div>
+
       <article className="prose prose-lg dark:prose-invert max-w-none">
-        <h1 className="font-headline">{lesson.title}</h1>
-        {lesson.summary && <p className="lead">{lesson.summary}</p>}
-        {lesson.content.split('\n').map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-        ))}
+        <MarkdownRenderer content={lesson.content} />
       </article>
 
       <Separator className="my-12" />
