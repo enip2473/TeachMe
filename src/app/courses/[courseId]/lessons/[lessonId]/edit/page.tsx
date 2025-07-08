@@ -11,6 +11,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft } from 'lucide-react';
 
+import MDEditor from '@uiw/react-md-editor';
+
 export default function EditLessonPage(props: { params: Promise<{ courseId: string, lessonId: string }> }) {
   const params = use(props.params);
   const { user } = useAuthContext();
@@ -42,10 +44,10 @@ export default function EditLessonPage(props: { params: Promise<{ courseId: stri
     fetchLesson();
   }, [params.courseId, params.lessonId]);
 
-  const handleLessonChange = (field: keyof Lesson, value: string) => {
+  const handleLessonChange = (field: keyof Lesson, value: string | undefined) => {
     if (!lesson) return;
     if (field === 'content') {
-      setMarkdownContent(value);
+      setMarkdownContent(value || '');
     } else {
       setLesson({ ...lesson, [field]: value });
     }
@@ -55,7 +57,6 @@ export default function EditLessonPage(props: { params: Promise<{ courseId: stri
     if (!lesson) return;
 
     try {
-      // Assuming updateLesson handles re-uploading content if it's changed
       await updateLesson(params.courseId, lesson.id, { ...lesson, content: markdownContent });
       toast({ title: "Success", description: "Lesson updated successfully." });
       router.push(`/courses/${params.courseId}/edit`);
@@ -95,12 +96,13 @@ export default function EditLessonPage(props: { params: Promise<{ courseId: stri
           placeholder="Lesson Summary"
           rows={4}
         />
-        <Textarea
-          value={markdownContent}
-          onChange={e => handleLessonChange('content', e.target.value)}
-          placeholder="Lesson Content (Markdown)"
-          rows={16}
-        />
+        <div data-color-mode="light">
+          <MDEditor
+            value={markdownContent}
+            onChange={handleLessonChange.bind(null, 'content')}
+            height={400}
+          />
+        </div>
       </div>
     </div>
   );

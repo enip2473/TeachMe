@@ -85,7 +85,7 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
       id: uuidv4(),
       title: 'New Lesson',
       summary: '',
-      content: '# New Lesson Content\n',
+      content: '',
     };
     const updatedModules = course.modules.map(module => {
       if (module.id === moduleId) {

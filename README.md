@@ -26,6 +26,12 @@ This project uses Firebase Authentication with Google as a provider. Users are a
 *   **Lecturer:** Can view lessons and courses, and has access to a Lecturer Dashboard (future feature).
 *   **Admin:** Can view lessons and courses, and has access to an Admin Dashboard (future feature).
 
+Authentication flow has been improved with a loading state to prevent UI flickering on page load. Access control has been refined, replacing direct redirects to removed login/signin pages with informative toast messages for unauthorized access.
+
+## Content Management
+
+Lesson content is written in Markdown. The editing experience has been enhanced with `uiw/react-md-editor`, providing a richer interface. Code blocks within markdown are now rendered with syntax highlighting using `react-syntax-highlighter`. Lesson content is securely and consistently stored in Firebase Storage, with robust handling for updates and new lesson initialization.
+
 ## Tech Stack
 
 *   [Next.js](https://nextjs.org/) - React framework
@@ -33,6 +39,8 @@ This project uses Firebase Authentication with Google as a provider. Users are a
 *   [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 *   [Genkit](https://firebase.google.com/docs/genkit) - AI integration
 *   [Firebase](https://firebase.google.com/) - Authentication, Firestore for metadata, and Storage for content.
+*   [`uiw/react-md-editor`](https://github.com/uiwjs/react-md-editor) - Markdown editor for React.
+*   [`react-syntax-highlighter`](https://github.com/react-syntax-highlighter/react-syntax-highlighter) - Syntax highlighting for React components.
 
 ## Content Hierarchy
 
