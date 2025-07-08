@@ -25,7 +25,7 @@ const formSchema = z.object({
 });
 
 export default function NewCoursePage() {
-  const { user } = useAuthContext();
+  const { user, loading: authLoading } = useAuthContext();
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
@@ -43,24 +43,30 @@ export default function NewCoursePage() {
   });
 
   useEffect(() => {
-    if (user === null) {
-      router.push('/signin');
-    } else if (user.role !== 'Lecturer' && user.role !== 'Admin') {
-      router.push('/'); // Redirect to home if not lecturer or admin
-      toast({
-        title: 'Access Denied',
-        description: 'You do not have permission to access this page.',
-        variant: 'destructive',
-      });
-    } else {
-      const fetchSubjects = async () => {
-        const fetchedSubjects = await getSubjects();
-        setSubjects(fetchedSubjects);
-        setLoading(false);
-      };
-      fetchSubjects();
+    if (!authLoading) {
+      if (user === null) {
+        toast({
+          title: 'Authentication Required',
+          description: 'Please sign in to create a new course.',
+          variant: 'destructive',
+        });
+      } else if (user.role !== 'Lecturer' && user.role !== 'Admin') {
+        router.push('/'); // Redirect to home if not lecturer or admin
+        toast({
+          title: 'Access Denied',
+          description: 'You do not have permission to access this page.',
+          variant: 'destructive',
+        });
+      } else {
+        const fetchSubjects = async () => {
+          const fetchedSubjects = await getSubjects();
+          setSubjects(fetchedSubjects);
+          setLoading(false);
+        };
+        fetchSubjects();
+      }
     }
-  }, [user, router, toast]);
+  }, [user, authLoading, router, toast]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!user) return;

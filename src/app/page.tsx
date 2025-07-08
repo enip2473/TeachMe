@@ -1,9 +1,28 @@
+'use client';
+
 import { getSubjects } from '@/lib/data';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
+import { useAuthContext } from '@/hooks/use-auth-context';
+import { useEffect, useState } from 'react';
+import { Subject } from '@/lib/types';
 
-export default async function Home() {
-  const subjects = await getSubjects();
+export default function Home() {
+  const { loading } = useAuthContext();
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+
+  useEffect(() => {
+    async function fetchSubjects() {
+      const subjects = await getSubjects();
+      setSubjects(subjects);
+    }
+
+    fetchSubjects();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container py-8">

@@ -18,7 +18,7 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
   const params = use(props.params);
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuthContext();
+  const { user, loading: authLoading } = useAuthContext();
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -33,7 +33,7 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
 
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
 
-  if (loading) {
+  if (loading || authLoading) {
     return <div>Loading...</div>;
   }
 

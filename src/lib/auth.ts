@@ -12,6 +12,7 @@ interface AuthUser extends User {
 
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -31,10 +32,11 @@ export function useAuth() {
       } else {
         setUser(null);
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
-  return { user };
+  return { user, loading };
 }

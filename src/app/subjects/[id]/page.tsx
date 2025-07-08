@@ -1,3 +1,5 @@
+'use client';
+
 import { getCoursesBySubject, getSubjectById } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -6,11 +8,32 @@ import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
 import AddLectureButton from '@/components/add-lecture-button';
+import { useAuthContext } from '@/hooks/use-auth-context';
+import { useEffect, useState, use } from 'react';
+import { Course, Subject } from '@/lib/types';
 
-export default async function SubjectPage(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
-  const subject = await getSubjectById(params.id);
-  const coursesInSubject = await getCoursesBySubject(params.id);
+export default function SubjectPage(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params);
+  const { loading: authLoading } = useAuthContext();
+  const [subject, setSubject] = useState<Subject | null>(null);
+  const [coursesInSubject, setCoursesInSubject] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSubjectData() {
+      const subjectData = await getSubjectById(params.id);
+      const coursesData = await getCoursesBySubject(params.id);
+      setSubject(subjectData);
+      setCoursesInSubject(coursesData);
+      setLoading(false);
+    }
+
+    fetchSubjectData();
+  }, [params.id]);
+
+  if (loading || authLoading) {
+    return <div>Loading...</div>;
+  }
 
   if (!subject) {
     notFound();
@@ -67,3 +90,4 @@ export default async function SubjectPage(props: { params: Promise<{ id: string 
     </div>
   );
 }
+

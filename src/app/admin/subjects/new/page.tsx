@@ -19,7 +19,7 @@ const formSchema = z.object({
 });
 
 export default function NewSubjectPage() {
-  const { user } = useAuthContext();
+  const { user, loading: authLoading } = useAuthContext();
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
@@ -33,19 +33,25 @@ export default function NewSubjectPage() {
   });
 
   useEffect(() => {
-    if (user === null) {
-      router.push('/signin');
-    } else if (user.role !== 'Admin') {
-      router.push('/'); // Redirect to home if not admin
-      toast({
-        title: 'Access Denied',
-        description: 'You do not have permission to access this page.',
-        variant: 'destructive',
-      });
-    } else {
-      setLoading(false);
+    if (!authLoading) {
+      if (user === null) {
+        toast({
+          title: 'Authentication Required',
+          description: 'Please sign in to create a new subject.',
+          variant: 'destructive',
+        });
+      } else if (user.role !== 'Admin') {
+        router.push('/'); // Redirect to home if not admin
+        toast({
+          title: 'Access Denied',
+          description: 'You do not have permission to access this page.',
+          variant: 'destructive',
+        });
+      } else {
+        setLoading(false);
+      }
     }
-  }, [user, router, toast]);
+  }, [user, authLoading, router, toast]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {

@@ -6,6 +6,6 @@ interface AuthUser extends User {
   role?: UserRole;
 }
 
-export const AuthContext = createContext<{ user: AuthUser | null }>({ user: null });
+export const AuthContext = createContext<{ user: AuthUser | null, loading: boolean }>({ user: null, loading: true });
 
 export const useAuthContext = () => useContext(AuthContext);
