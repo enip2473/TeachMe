@@ -73,22 +73,22 @@ export const updateCourse = async (courseId: string, course: Course): Promise<vo
   await updateDoc(courseDocRef, { ...course });
 };
 
-export const updateLesson = async (courseId: string, lessonId: string, lesson: Lesson): Promise<void> => {
+export const updateLesson = async (courseId: string, lessonId: string, updatedLessonData: Lesson): Promise<void> => {
   const course = await getCourseById(courseId);
   if (!course) {
     throw new Error('Course not found');
   }
 
-  // Upload content to Firebase Storage
+  // Always upload the content to Firebase Storage, treating it as raw markdown
   const storageRef = ref(storage, `lessons/${courseId}/${lessonId}.md`);
-  await uploadString(storageRef, lesson.content, 'raw');
+  await uploadString(storageRef, updatedLessonData.content, 'raw');
   const contentUrl = await getDownloadURL(storageRef);
 
   const updatedModules = course.modules.map(module => {
     const lessonIndex = module.lessons.findIndex(l => l.id === lessonId);
     if (lessonIndex !== -1) {
       const updatedLessons = [...module.lessons];
-      updatedLessons[lessonIndex] = { ...lesson, content: contentUrl };
+      updatedLessons[lessonIndex] = { ...updatedLessonData, content: contentUrl };
       return { ...module, lessons: updatedLessons };
     }
     return module;

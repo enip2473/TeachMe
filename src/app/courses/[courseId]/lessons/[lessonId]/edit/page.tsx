@@ -19,10 +19,24 @@ export default function EditLessonPage(props: { params: Promise<{ courseId: stri
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [markdownContent, setMarkdownContent] = useState<string>('');
+
   useEffect(() => {
     const fetchLesson = async () => {
       const lessonData = await getLessonById(params.courseId, params.lessonId);
-      setLesson(lessonData);
+      if (lessonData) {
+        setLesson(lessonData);
+        if (lessonData.content) {
+          try {
+            const response = await fetch(lessonData.content);
+            const text = await response.text();
+            setMarkdownContent(text);
+          } catch (error) {
+            console.error('Failed to fetch markdown content:', error);
+            setMarkdownContent('Error loading content.');
+          }
+        }
+      }
       setLoading(false);
     };
     fetchLesson();
@@ -30,14 +44,19 @@ export default function EditLessonPage(props: { params: Promise<{ courseId: stri
 
   const handleLessonChange = (field: keyof Lesson, value: string) => {
     if (!lesson) return;
-    setLesson({ ...lesson, [field]: value });
+    if (field === 'content') {
+      setMarkdownContent(value);
+    } else {
+      setLesson({ ...lesson, [field]: value });
+    }
   };
 
   const handleSaveChanges = async () => {
     if (!lesson) return;
 
     try {
-      await updateLesson(params.courseId, lesson.id, lesson);
+      // Assuming updateLesson handles re-uploading content if it's changed
+      await updateLesson(params.courseId, lesson.id, { ...lesson, content: markdownContent });
       toast({ title: "Success", description: "Lesson updated successfully." });
       router.push(`/courses/${params.courseId}/edit`);
     } catch (error) {
@@ -77,7 +96,7 @@ export default function EditLessonPage(props: { params: Promise<{ courseId: stri
           rows={4}
         />
         <Textarea
-          value={lesson.content}
+          value={markdownContent}
           onChange={e => handleLessonChange('content', e.target.value)}
           placeholder="Lesson Content (Markdown)"
           rows={16}
