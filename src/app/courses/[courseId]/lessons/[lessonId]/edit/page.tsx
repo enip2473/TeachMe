@@ -35,7 +35,7 @@ export default function EditLessonPage(props: { params: Promise<{ courseId: stri
             setMarkdownContent(text);
           } catch (error) {
             console.error('Failed to fetch markdown content:', error);
-            setMarkdownContent('Error loading content.');
+            setMarkdownContent('載入內容錯誤。');
           }
         }
       }
@@ -58,16 +58,16 @@ export default function EditLessonPage(props: { params: Promise<{ courseId: stri
 
     try {
       await updateLesson(params.courseId, lesson.id, { ...lesson, content: markdownContent });
-      toast({ title: "Success", description: "Lesson updated successfully." });
+      toast({ title: "成功", description: "課程更新成功。" });
       router.push(`/courses/${params.courseId}/edit`);
     } catch (error) {
       console.error("Failed to update lesson:", error);
-      toast({ title: "Error", description: "Failed to update lesson.", variant: "destructive" });
+      toast({ title: "錯誤", description: "更新課程失敗。請再試一次。", variant: "destructive" });
     }
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>載入中...</div>;
   }
 
   if (!lesson) {
@@ -80,8 +80,8 @@ export default function EditLessonPage(props: { params: Promise<{ courseId: stri
         <Button variant="outline" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-3xl font-bold font-headline">Edit Lesson: {lesson.title}</h1>
-        <Button onClick={handleSaveChanges}>Save Changes</Button>
+        <h1 className="text-3xl font-bold font-headline">編輯課程：{lesson.title}</h1>
+        <Button onClick={handleSaveChanges}>儲存變更</Button>
       </div>
 
       <div className="space-y-4">
@@ -93,7 +93,7 @@ export default function EditLessonPage(props: { params: Promise<{ courseId: stri
         <Textarea
           value={lesson.summary}
           onChange={e => handleLessonChange('summary', e.target.value)}
-          placeholder="Lesson Summary"
+          placeholder="課程摘要"
           rows={4}
         />
         <div data-color-mode="light">

@@ -32,7 +32,7 @@ export default function SubjectPage(props: { params: Promise<{ id: string }> }) 
   }, [params.id]);
 
   if (loading || authLoading) {
-    return <div>Loading...</div>;
+    return <div>載入中...</div>;
   }
 
   if (!subject) {
@@ -43,7 +43,7 @@ export default function SubjectPage(props: { params: Promise<{ id: string }> }) 
     <div className="container py-8">
       <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4">
         <ArrowLeft className="w-4 h-4" />
-        Back to Subjects
+        返回科目
       </Link>
       <div className="flex items-center justify-between gap-4 mb-8">
         <div>
@@ -83,8 +83,8 @@ export default function SubjectPage(props: { params: Promise<{ id: string }> }) 
         </div>
       ) : (
         <div className="text-center py-16 border rounded-lg">
-          <h2 className="text-2xl font-headline">No Courses Yet</h2>
-          <p className="text-muted-foreground mt-2">Courses for {subject.name} are coming soon. Check back later!</p>
+          <h2 className="text-2xl font-headline">尚未有課程</h2>
+          <p className="text-muted-foreground mt-2">{subject.name} 的課程即將推出。請稍後再回來查看！</p>
         </div>
       )}
     </div>

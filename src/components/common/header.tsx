@@ -41,40 +41,40 @@ export function Header() {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.role}</p>
+                      <p className="text-sm font-medium leading-none">{user.role === 'Student' ? '學生' : user.role === 'Lecturer' ? '講師' : user.role === 'Admin' ? '管理員' : user.role}</p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user.email}
                       </p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>My Courses</DropdownMenuItem>
+                  <DropdownMenuItem>個人資料</DropdownMenuItem>
+                  <DropdownMenuItem>我的課程</DropdownMenuItem>
                   {user.role === 'Lecturer' && (
                     <>
-                      <DropdownMenuItem>Lecturer Dashboard</DropdownMenuItem>
+                      <DropdownMenuItem>講師儀表板</DropdownMenuItem>
                       <DropdownMenuItem>
-                        <Link href="/lecturer/courses/new">Create New Course</Link>
+                        <Link href="/lecturer/courses/new">建立新課程</Link>
                       </DropdownMenuItem>
                     </>
                   )}
                   {user.role === 'Admin' && (
                     <>
-                      <DropdownMenuItem>Admin Dashboard</DropdownMenuItem>
+                      <DropdownMenuItem>管理員儀表板</DropdownMenuItem>
                       <DropdownMenuItem>
-                        <Link href="/admin/subjects/new">Create New Subject</Link>
+                        <Link href="/admin/subjects/new">建立新科目</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem>
-                        <Link href="/lecturer/courses/new">Create New Course</Link>
+                        <Link href="/lecturer/courses/new">建立新課程</Link>
                       </DropdownMenuItem>
                     </>
                   )}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>Log out</DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut}>登出</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button onClick={handleSignIn}>Log in</Button>
+              <Button onClick={handleSignIn}>登入</Button>
             )}
           </nav>
         </div>

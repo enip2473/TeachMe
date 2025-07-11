@@ -60,7 +60,7 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
     <div className="container py-8">
        <Link href={`/subjects/${course.subject}`} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4">
         <ArrowLeft className="w-4 h-4" />
-        Back to {course.subject.charAt(0).toUpperCase() + course.subject.slice(1)}
+        返回 {course.subject.charAt(0).toUpperCase() + course.subject.slice(1)}
       </Link>
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2">
@@ -81,7 +81,7 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
             </CardHeader>
           </Card>
 
-          <h2 className="text-2xl font-bold font-headline mb-4">Course Content</h2>
+          <h2 className="text-2xl font-bold font-headline mb-4">課程內容</h2>
           <Accordion type="single" collapsible defaultValue={`item-${course.modules[0]?.id}`} className="w-full">
             {course.modules.map((module) => (
               <AccordionItem value={`item-${module.id}`} key={module.id}>
@@ -107,7 +107,7 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
                         )}
                         {item.type === 'lesson' && (
                           <div className="flex items-center gap-2">
-                            <label htmlFor={`lesson-${item.id}`} className="text-sm text-muted-foreground pr-2">Mark as complete</label>
+                            <label htmlFor={`lesson-${item.id}`} className="text-sm text-muted-foreground pr-2">標記為完成</label>
                             <Checkbox
                               id={`lesson-${item.id}`}
                               checked={completedLessons.has(item.id)}
@@ -129,7 +129,7 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
             <Button asChild className="w-full">
               <Link href={`/courses/${course.id}/edit`}>
                 <Edit className="mr-2 h-4 w-4" />
-                Edit Lessons
+                編輯課程
               </Link>
             </Button>
           )}
@@ -149,7 +149,7 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
                 }
                 return `#`; // Fallback if no content is available
               })()}>
-                Start Learning
+                開始學習
               </Link>
             </Button>
           )}

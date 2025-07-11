@@ -21,15 +21,15 @@ export default function Home() {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>載入中...</div>;
   }
 
   return (
     <div className="container py-8">
       <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold font-headline tracking-tight">Welcome to Your Universe of Learning</h1>
+        <h1 className="text-4xl md:text-5xl font-bold font-headline tracking-tight">歡迎來到你的學習宇宙</h1>
         <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-          Explore a wide range of subjects, master new skills, and track your progress. Start your learning journey with TeachMe today.
+          探索廣泛的學科，掌握新技能，並追蹤你的進度。今天就開始你的 TeachMe 學習之旅。
         </p>
       </div>
 

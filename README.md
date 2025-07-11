@@ -48,8 +48,9 @@ The educational content is organized in a hierarchical structure:
 
 *   **Subjects:** Broad categories (e.g., "Mathematics", "History").
 *   **Courses:** Specific learning paths within a subject.
-*   **Modules:** Sections within a course, grouping related lessons.
+*   **Modules:** Sections within a course, grouping related lessons and homeworks.
 *   **Lessons:** Individual learning units within a module. Lesson content is written in Markdown.
+*   **Homeworks:** Individual assignments within a module, supporting various problem types (starting with multiple-choice).
 
 ## Project Structure
 

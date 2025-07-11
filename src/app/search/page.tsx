@@ -24,11 +24,11 @@ export default async function SearchPage(
       <div className="mb-8">
         <h1 className="text-4xl font-bold font-headline flex items-center gap-3">
           <Search className="w-8 h-8" />
-          Search Results
+          搜尋結果
         </h1>
         {query && (
             <p className="text-muted-foreground text-lg mt-2">
-                Showing results for: <span className="text-foreground font-semibold">&quot;{query}&quot;</span>
+                顯示結果：<span className="text-foreground font-semibold">&quot;{query}&quot;</span>
             </p>
         )}
       </div>
@@ -63,9 +63,9 @@ export default async function SearchPage(
         </div>
       ) : (
         <div className="text-center py-16 border rounded-lg">
-          <h2 className="text-2xl font-headline">No Results Found</h2>
+          <h2 className="text-2xl font-headline">沒有找到結果</h2>
           <p className="text-muted-foreground mt-2">
-            We couldn&apos;t find any courses matching your search. Try a different term.
+            我們找不到符合您搜尋的課程。請嘗試不同的詞彙。
           </p>
         </div>
       )}

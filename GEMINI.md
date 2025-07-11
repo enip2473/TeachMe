@@ -33,7 +33,9 @@ Authentication flow has been improved with a loading state to prevent UI flicker
 
 *   **Subjects:** Broad categories (e.g., "Mathematics", "History").
 *   **Courses:** Specific learning paths within a subject.
-*   **Modules:** Sections within a course, grouping related lessons.
+*   **Modules:** Sections within a course, grouping related content (lessons and homeworks).
+*   **Lessons:** Individual learning units within a module. Lesson content is written in Markdown and rendered in the UI. The lesson editing experience has been enhanced, and new lesson content initialization is now correctly handled.
+*   **Homeworks:** Individual assignments within a module, supporting various problem types (starting with multiple-choice).
 *   **Lessons:** Individual learning units within a module. Lesson content is written in Markdown and rendered in the UI. The lesson editing experience has been enhanced, and new lesson content initialization is now correctly handled.
 
 ### Development

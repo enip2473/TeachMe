@@ -155,15 +155,15 @@ export default function EditHomeworkPage(props: EditHomeworkPageProps) {
 
     try {
       await updateCourse(course.id, updatedCourse);
-      toast({ title: "Success", description: "Homework updated successfully." });
+      toast({ title: "成功", description: "作業更新成功。" });
     } catch (error) {
       console.error("Failed to update homework:", error);
-      toast({ title: "Error", description: "Failed to update homework.", variant: "destructive" });
+      toast({ title: "錯誤", description: "更新作業失敗。請再試一次。", variant: "destructive" });
     }
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>載入中...</div>;
   }
 
   if (!homework || !course || user?.uid !== course.ownerId) {
@@ -178,8 +178,8 @@ export default function EditHomeworkPage(props: EditHomeworkPageProps) {
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold font-headline">Edit Homework: {homework.title}</h1>
-        <Button onClick={handleSaveChanges}>Save Changes</Button>
+        <h1 className="text-3xl font-bold font-headline">編輯作業：{homework.title}</h1>
+        <Button onClick={handleSaveChanges}>儲存變更</Button>
       </div>
 
       <div className="space-y-4 mb-8">
@@ -190,9 +190,9 @@ export default function EditHomeworkPage(props: EditHomeworkPageProps) {
         />
       </div>
 
-      <h2 className="text-2xl font-bold font-headline mb-4">Problems</h2>
+      <h2 className="text-2xl font-bold font-headline mb-4">問題</h2>
       <Button onClick={handleAddProblem} className="mb-4">
-        <PlusCircle className="mr-2 h-4 w-4" /> Add Multiple Choice Problem
+        <PlusCircle className="mr-2 h-4 w-4" /> 新增選擇題
       </Button>
 
       <div className="space-y-6">
@@ -202,7 +202,7 @@ export default function EditHomeworkPage(props: EditHomeworkPageProps) {
             return (
               <div key={problem.id} className="p-4 border rounded-lg">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xl font-semibold">Problem {index + 1}</h3>
+                  <h3 className="text-xl font-semibold">問題 {index + 1}</h3>
                   <Button variant="destructive" size="sm" onClick={() => handleDeleteProblem(problem.id)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -210,18 +210,18 @@ export default function EditHomeworkPage(props: EditHomeworkPageProps) {
                 <Textarea
                   value={problem.question}
                   onChange={e => handleProblemChange(problem.id, 'question', e.target.value)}
-                  placeholder="Question"
+                  placeholder="問題"
                   rows={3}
                   className="mb-4"
                 />
-                <h4 className="text-lg font-medium mb-2">Options</h4>
+                <h4 className="text-lg font-medium mb-2">選項</h4>
                 <div className="space-y-2 mb-4">
                   {problem.options.map((option, optionIndex) => (
                     <div key={optionIndex} className="flex items-center space-x-2">
                       <Input
                         value={option}
                         onChange={e => handleOptionChange(problem.id, optionIndex, e.target.value)}
-                        placeholder={`Option ${optionIndex + 1}`}
+                        placeholder={`選項 ${optionIndex + 1}`}
                       />
                       <Button variant="destructive" size="sm" onClick={() => handleDeleteOption(problem.id, optionIndex)}>
                         <Trash2 className="h-4 w-4" />
@@ -230,21 +230,21 @@ export default function EditHomeworkPage(props: EditHomeworkPageProps) {
                   ))}
                 </div>
                 <Button onClick={() => handleAddOption(problem.id)} size="sm" className="mb-4">
-                  <PlusCircle className="mr-2 h-4 w-4" /> Add Option
+                  <PlusCircle className="mr-2 h-4 w-4" /> 新增選項
                 </Button>
                 <div className="flex items-center space-x-2">
-                  <Label>Correct Answer:</Label>
+                  <Label>正確答案：</Label>
                   <Select
                     value={problem.correctAnswer.toString()}
                     onValueChange={value => handleProblemChange(problem.id, 'correctAnswer', parseInt(value))}
                   >
                     <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Select correct option" />
+                      <SelectValue placeholder="選擇正確選項" />
                     </SelectTrigger>
                     <SelectContent>
                       {problem.options.map((option, optionIndex) => (
                         <SelectItem key={optionIndex} value={optionIndex.toString()}>
-                          {`Option ${optionIndex + 1}: ${option}`}
+                          {`選項 ${optionIndex + 1}: ${option}`}
                         </SelectItem>
                       ))}
                     </SelectContent>

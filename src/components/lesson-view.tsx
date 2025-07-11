@@ -38,7 +38,7 @@ export function LessonView({ lesson, course }: LessonViewProps){
   }, [lesson?.content]);
 
   if (!user) {
-    return <div>Please sign in to view this lesson.</div>;
+    return <div>請登入以查看此課程。</div>;
   }
 
   if (!lesson || !course) {
@@ -52,7 +52,7 @@ export function LessonView({ lesson, course }: LessonViewProps){
       <div className="mb-6">
         <Link href={`/courses/${lesson.courseId}`} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="w-4 h-4" />
-          Back to Course
+          返回課程
         </Link>
         <div className="flex items-center text-sm text-muted-foreground mt-2">
           <span>{lesson.courseTitle}</span>
@@ -67,7 +67,7 @@ export function LessonView({ lesson, course }: LessonViewProps){
       </div>
 
       <article className="prose prose-lg dark:prose-invert max-w-none">
-        {loading ? <p>Loading...</p> : <MarkdownRenderer content={content} />}
+        {loading ? <p>載入中...</p> : <MarkdownRenderer content={content} />}
       </article>
 
       <Separator className="my-12" />
@@ -76,7 +76,7 @@ export function LessonView({ lesson, course }: LessonViewProps){
         <div className="flex justify-end">
           <Link href={`/courses/${course.id}/edit`}>
             <Button variant="outline">
-              <Edit className="mr-2 h-4 w-4" /> Edit Course Lessons
+              <Edit className="mr-2 h-4 w-4" /> 編輯課程內容
             </Button>
           </Link>
         </div>

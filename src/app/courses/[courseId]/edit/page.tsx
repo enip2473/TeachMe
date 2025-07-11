@@ -214,8 +214,8 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold font-headline">Edit: {course.title}</h1>
-        <Button onClick={handleSaveChanges}>Save Changes</Button>
+        <h1 className="text-3xl font-bold font-headline">編輯：{course.title}</h1>
+        <Button onClick={handleSaveChanges}>儲存變更</Button>
       </div>
 
       <div className="space-y-4 mb-8">
@@ -227,26 +227,26 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
         <Textarea
           value={course.description}
           onChange={e => handleCourseChange('description', e.target.value)}
-          placeholder="Course Description"
+          placeholder="課程描述"
           rows={4}
         />
         <Input
           value={course.image}
           onChange={e => handleCourseChange('image', e.target.value)}
-          placeholder="Course Image URL"
+          placeholder="課程圖片網址"
         />
       </div>
 
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="space-y-6">
-          <Button onClick={handleAddModule} className="mb-4">Add New Module</Button>
+          <Button onClick={handleAddModule} className="mb-4">新增模組</Button>
           <Droppable droppableId="modules" type="module">
             {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-6">
                 {course.modules.length === 0 ? (
                   <div className="text-center py-16 border rounded-lg">
-                    <h2 className="text-2xl font-headline mb-4">No Modules Yet</h2>
-                    <p className="text-muted-foreground mb-6">Add your first module to start organizing your lessons.</p>
+                    <h2 className="text-2xl font-headline mb-4">尚未有模組</h2>
+                    <p className="text-muted-foreground mb-6">新增您的第一個模組以開始組織您的課程。</p>
                   </div>
                 ) : (
                   course.modules.map((module, moduleIndex) => (
@@ -260,7 +260,7 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
                               className="text-2xl font-bold"
                               {...provided.dragHandleProps}
                             />
-                            <Button variant="destructive" size="sm" onClick={() => handleDeleteModule(module.id)}>Delete Module</Button>
+                            <Button variant="destructive" size="sm" onClick={() => handleDeleteModule(module.id)}>刪除模組</Button>
                           </div>
                           <Droppable droppableId={module.id} type="content">
                             {(provided) => (
@@ -287,8 +287,8 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
                             )}
                           </Droppable>
                           <div className="flex gap-2 mt-4">
-                            <Button onClick={() => handleAddLesson(module.id)}>Add Lesson</Button>
-                            <Button onClick={() => handleAddHomework(module.id)}>Add Homework</Button>
+                            <Button onClick={() => handleAddLesson(module.id)}>新增課程</Button>
+                            <Button onClick={() => handleAddHomework(module.id)}>新增作業</Button>
                           </div>
                         </div>
                       )}

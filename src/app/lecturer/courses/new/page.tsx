@@ -17,10 +17,14 @@ import { Course, Subject } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
 
 const formSchema = z.object({
-  title: z.string().min(2, { message: 'Course title must be at least 2 characters.' }),
-  description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
-  subject: z.string().min(1, { message: 'Please select a subject.' }),
-  difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced'], { message: 'Please select a difficulty.' }),
+  title: z.string().min(2, { message: '課程標題至少需要2個字元。
+' }),
+  description: z.string().min(10, { message: '描述至少需要10個字元。
+' }),
+  subject: z.string().min(1, { message: '請選擇一個科目。
+' }),
+  difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced'], { message: '請選擇一個難度。
+' }),
   image: z.string().url().optional().or(z.literal('')),
 });
 
@@ -46,15 +50,15 @@ export default function NewCoursePage() {
     if (!authLoading) {
       if (user === null) {
         toast({
-          title: 'Authentication Required',
-          description: 'Please sign in to create a new course.',
+          title: '需要身份驗證',
+          description: '請登入以建立新課程。',
           variant: 'destructive',
         });
       } else if (user.role !== 'Lecturer' && user.role !== 'Admin') {
         router.push('/'); // Redirect to home if not lecturer or admin
         toast({
-          title: 'Access Denied',
-          description: 'You do not have permission to access this page.',
+          title: '拒絕存取',
+          description: '您沒有權限存取此頁面。',
           variant: 'destructive',
         });
       } else {
@@ -82,27 +86,27 @@ export default function NewCoursePage() {
     try {
       await addCourse(newCourse);
       toast({
-        title: 'Course Created',
-        description: `Course "${values.title}" has been successfully created.`,
+        title: '課程已建立',
+        description: `課程 "${values.title}" 已成功建立。`,
       });
       router.push(`/courses/${courseId}/edit`);
     } catch (error) {
       console.error('Error creating course:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to create course. Please try again.',
+        title: '錯誤',
+        description: '建立課程失敗。請再試一次。',
         variant: 'destructive',
       });
     }
   }
 
   if (loading) {
-    return <div>Loading subjects...</div>;
+    return <div>載入科目中...</div>;
   }
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Create New Course</h1>
+      <h1 className="text-3xl font-bold mb-6">建立新課程</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -110,9 +114,9 @@ export default function NewCoursePage() {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Course Title</FormLabel>
+                <FormLabel>課程標題</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Introduction to Algebra" {...field} />
+                  <Input placeholder="例如：代數入門" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -123,9 +127,9 @@ export default function NewCoursePage() {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>描述</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Describe the course" {...field} />
+                  <Textarea placeholder="描述課程" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -136,11 +140,11 @@ export default function NewCoursePage() {
             name="subject"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Subject</FormLabel>
+                <FormLabel>科目</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a subject" />
+                      <SelectValue placeholder="選擇科目" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -160,17 +164,17 @@ export default function NewCoursePage() {
             name="difficulty"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Difficulty</FormLabel>
+                <FormLabel>難度</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select difficulty" />
+                      <SelectValue placeholder="選擇難度" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Beginner">Beginner</SelectItem>
-                    <SelectItem value="Intermediate">Intermediate</SelectItem>
-                    <SelectItem value="Advanced">Advanced</SelectItem>
+                    <SelectItem value="Beginner">初級</SelectItem>
+                    <SelectItem value="Intermediate">中級</SelectItem>
+                    <SelectItem value="Advanced">高級</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -182,15 +186,15 @@ export default function NewCoursePage() {
             name="image"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Image URL</FormLabel>
+                <FormLabel>圖片網址</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., https://example.com/course-image.jpg" {...field} />
+                  <Input placeholder="例如：https://example.com/course-image.jpg" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit">Create Course</Button>
+          <Button type="submit">建立課程</Button>
         </form>
       </Form>
     </div>

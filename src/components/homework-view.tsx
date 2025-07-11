@@ -14,7 +14,7 @@ export function HomeworkView({ homework, course }: HomeworkViewProps) {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">{homework.title}</h1>
-      <h2 className="text-xl text-gray-600 mb-6">Course: {course.title}</h2>
+      <h2 className="text-xl text-gray-600 mb-6">課程：{course.title}</h2>
 
       {homework.problems.map((problemWrapper, index) => {
         if (problemWrapper.type === ProblemType.MultipleChoice) {
@@ -22,7 +22,7 @@ export function HomeworkView({ homework, course }: HomeworkViewProps) {
           return (
             <Card key={problem.id} className="mb-6">
               <CardHeader>
-                <CardTitle>Problem {index + 1}: {problem.question}</CardTitle>
+                <CardTitle>問題 {index + 1}: {problem.question}</CardTitle>
               </CardHeader>
               <CardContent>
                 <RadioGroup>

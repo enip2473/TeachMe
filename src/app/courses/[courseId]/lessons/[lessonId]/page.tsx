@@ -34,7 +34,7 @@ export default function LessonPage(props: LessonPageProps) {
   }, [params.courseId, params.lessonId]);
 
   if (loading || authLoading) {
-    return <div>Loading...</div>;
+    return <div>載入中...</div>;
   }
 
   if (!lesson || !course) {

@@ -34,7 +34,7 @@ export default function HomeworkPage(props: HomeworkPageProps) {
   }, [params.courseId, params.homeworkId]);
 
   if (loading || authLoading) {
-    return <div>Loading...</div>;
+    return <div>載入中...</div>;
   }
 
   if (!homework || !course) {

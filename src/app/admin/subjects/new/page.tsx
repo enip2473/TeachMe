@@ -14,8 +14,10 @@ import { addSubject } from '@/lib/data'; // We will create this function
 import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
-  name: z.string().min(2, { message: 'Subject name must be at least 2 characters.' }),
-  description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
+  name: z.string().min(2, { message: '科目名稱至少需要2個字元。
+' }),
+  description: z.string().min(10, { message: '描述至少需要10個字元。
+' }),
 });
 
 export default function NewSubjectPage() {
@@ -36,15 +38,15 @@ export default function NewSubjectPage() {
     if (!authLoading) {
       if (user === null) {
         toast({
-          title: 'Authentication Required',
-          description: 'Please sign in to create a new subject.',
+          title: '需要身份驗證',
+          description: '請登入以建立新科目。',
           variant: 'destructive',
         });
       } else if (user.role !== 'Admin') {
         router.push('/'); // Redirect to home if not admin
         toast({
-          title: 'Access Denied',
-          description: 'You do not have permission to access this page.',
+          title: '拒絕存取',
+          description: '您沒有權限存取此頁面。',
           variant: 'destructive',
         });
       } else {
@@ -57,27 +59,27 @@ export default function NewSubjectPage() {
     try {
       await addSubject(values.name, values.description);
       toast({
-        title: 'Subject Created',
-        description: `Subject "${values.name}" has been successfully created.`,
+        title: '科目已建立',
+        description: `科目 "${values.name}" 已成功建立。`,
       });
       form.reset();
     } catch (error) {
       console.error('Error creating subject:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to create subject. Please try again.',
+        title: '錯誤',
+        description: '建立科目失敗。請再試一次。',
         variant: 'destructive',
       });
     }
   }
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>載入中...</div>;
   }
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Create New Subject</h1>
+      <h1 className="text-3xl font-bold mb-6">建立新科目</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -85,9 +87,9 @@ export default function NewSubjectPage() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Subject Name</FormLabel>
+                <FormLabel>科目名稱</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Mathematics" {...field} />
+                  <Input placeholder="例如：數學" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -98,15 +100,15 @@ export default function NewSubjectPage() {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>描述</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Describe the subject" {...field} />
+                  <Textarea placeholder="描述科目" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit">Create Subject</Button>
+          <Button type="submit">建立科目</Button>
         </form>
       </Form>
     </div>

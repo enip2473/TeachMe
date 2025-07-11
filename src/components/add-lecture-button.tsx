@@ -18,7 +18,7 @@ export default function AddLectureButton({ subjectId }: { subjectId: string }) {
     <Button asChild>
       <Link href={`/lecturer/courses/new?subjectId=${subjectId}`}>
         <PlusCircle className="w-4 h-4 mr-2" />
-        Add New Lecture
+        新增課程
       </Link>
     </Button>
   );
