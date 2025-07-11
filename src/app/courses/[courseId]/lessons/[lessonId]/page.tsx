@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { LessonView } from '@/components/lesson-view';
 import { useAuthContext } from '@/hooks/use-auth-context';
 import { useEffect, useState, use } from 'react';
-import { Lesson, Course } from '@/lib/types';
+import { Lesson, Course, ModuleContent } from '@/lib/types';
 
 interface LessonPageProps {
   params: Promise<{

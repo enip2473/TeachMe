@@ -8,7 +8,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { useState, useMemo, useEffect, use } from 'react';
-import { ArrowLeft, CheckCircle2, ChevronRight, FileText, Edit } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ChevronRight, FileText, Edit, ClipboardList } from 'lucide-react';
 import Image from 'next/image';
 import { Course } from '@/lib/types';
 import { useAuthContext } from '@/hooks/use-auth-context';
@@ -29,7 +29,7 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
     fetchCourse();
   }, [params.courseId]);
 
-  const totalLessons = useMemo(() => course?.modules.reduce((acc, module) => acc + module.lessons.length, 0) || 0, [course]);
+  const totalContentItems = useMemo(() => course?.modules.reduce((acc, module) => acc + module.content.length, 0) || 0, [course]);
 
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
 
@@ -53,7 +53,7 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
     });
   };
 
-  const progressPercentage = totalLessons > 0 ? (completedLessons.size / totalLessons) * 100 : 0;
+  const progressPercentage = totalContentItems > 0 ? (completedLessons.size / totalContentItems) * 100 : 0;
   const isOwner = user?.uid === course.ownerId;
 
   return (
@@ -88,24 +88,33 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
                 <AccordionTrigger className="text-lg font-semibold">{module.title}</AccordionTrigger>
                 <AccordionContent>
                   <ul className="space-y-2 p-2">
-                    {module.lessons.map((lesson) => (
-                      <li key={lesson.id} className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50">
-                        <Link href={`/courses/${course.id}/lessons/${lesson.id}`} className="flex items-center gap-3 group">
-                           {completedLessons.has(lesson.id) ? (
+                    {module.content.map((item) => (
+                      <li key={item.id} className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50">
+                        {item.type === 'lesson' ? (
+                          <Link href={`/courses/${course.id}/lessons/${item.id}`} className="flex items-center gap-3 group">
+                            {completedLessons.has(item.id) ? (
                               <CheckCircle2 className="w-5 h-5 text-green-500" />
                             ) : (
                               <FileText className="w-5 h-5 text-muted-foreground" />
-                           )}
-                           <span className="group-hover:text-primary transition-colors">{lesson.title}</span>
-                        </Link>
-                        <div className="flex items-center gap-2">
-                          <label htmlFor={`lesson-${lesson.id}`} className="text-sm text-muted-foreground pr-2">Mark as complete</label>
-                          <Checkbox
-                            id={`lesson-${lesson.id}`}
-                            checked={completedLessons.has(lesson.id)}
-                            onCheckedChange={(checked) => handleLessonCompletion(lesson.id, !!checked)}
-                          />
-                        </div>
+                            )}
+                            <span className="group-hover:text-primary transition-colors">{item.title}</span>
+                          </Link>
+                        ) : (
+                          <Link href={`/courses/${course.id}/homework/${item.id}`} className="flex items-center gap-3 group">
+                            <ClipboardList className="w-5 h-5 text-muted-foreground" />
+                            <span className="group-hover:text-primary transition-colors">{item.title} (Homework)</span>
+                          </Link>
+                        )}
+                        {item.type === 'lesson' && (
+                          <div className="flex items-center gap-2">
+                            <label htmlFor={`lesson-${item.id}`} className="text-sm text-muted-foreground pr-2">Mark as complete</label>
+                            <Checkbox
+                              id={`lesson-${item.id}`}
+                              checked={completedLessons.has(item.id)}
+                              onCheckedChange={(checked) => handleLessonCompletion(item.id, !!checked)}
+                            />
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -124,9 +133,22 @@ export default function CoursePage(props: { params: Promise<{ courseId: string }
               </Link>
             </Button>
           )}
-          {!isOwner && course.modules[0]?.lessons[0] && (
+          {!isOwner && (
             <Button asChild className="w-full">
-              <Link href={`/courses/${course.id}/lessons/${course.modules[0].lessons[0].id}`}>
+              <Link href={(() => {
+                const firstModule = course.modules[0];
+                if (firstModule) {
+                  if (firstModule.content && firstModule.content.length > 0) {
+                    const firstItem = firstModule.content[0];
+                    if (firstItem.type === 'lesson') {
+                      return `/courses/${course.id}/lessons/${firstItem.id}`;
+                    } else if (firstItem.type === 'homework') {
+                      return `/courses/${course.id}/homework/${firstItem.id}`;
+                    }
+                  }
+                }
+                return `#`; // Fallback if no content is available
+              })()}>
                 Start Learning
               </Link>
             </Button>

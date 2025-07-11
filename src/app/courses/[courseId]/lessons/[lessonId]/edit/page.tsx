@@ -4,7 +4,7 @@ import { getLessonById, updateLesson } from '@/lib/data';
 import { notFound, useRouter } from 'next/navigation';
 import { useAuthContext } from '@/hooks/use-auth-context';
 import { useEffect, useState, use } from 'react';
-import { Lesson } from '@/lib/types';
+import { Lesson, ModuleContent } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

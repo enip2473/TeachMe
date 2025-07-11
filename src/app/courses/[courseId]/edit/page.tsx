@@ -4,7 +4,7 @@ import { getCourseById, updateCourse } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import { useAuthContext } from '@/hooks/use-auth-context';
 import { useEffect, useState, use } from 'react';
-import { Course, Lesson, Module } from '@/lib/types';
+import { Course, Lesson, Module, Homework } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -46,17 +46,17 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
     setCourse({ ...course, modules: updatedModules });
   };
 
-  const handleLessonChange = (moduleId: string, lessonId: string, field: keyof Lesson, value: string) => {""
+  const handleContentChange = (moduleId: string, itemId: string, field: string, value: any) => {
     if (!course) return;
     const updatedModules = course.modules.map(module => {
       if (module.id === moduleId) {
-        const updatedLessons = module.lessons.map(lesson => {
-          if (lesson.id === lessonId) {
-            return { ...lesson, [field]: value };
+        const updatedContent = module.content.map(item => {
+          if (item.id === itemId) {
+            return { ...item, [field]: value };
           }
-          return lesson;
+          return item;
         });
-        return { ...module, lessons: updatedLessons };
+        return { ...module, content: updatedContent };
       }
       return module;
     });
@@ -68,7 +68,7 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
     const newModule: Module = {
       id: uuidv4(),
       title: 'New Module',
-      lessons: [],
+      content: [],
     };
     setCourse({ ...course, modules: [...course.modules, newModule] });
   };
@@ -83,13 +83,14 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
     if (!course) return;
     const newLesson: Lesson = {
       id: uuidv4(),
+      type: 'lesson',
       title: 'New Lesson',
       summary: '',
       content: '',
     };
     const updatedModules = course.modules.map(module => {
       if (module.id === moduleId) {
-        return { ...module, lessons: [...module.lessons, newLesson] };
+        return { ...module, content: [...module.content, newLesson] };
       }
       return module;
     });
@@ -104,12 +105,37 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
     }
   };
 
-  const handleDeleteLesson = (moduleId: string, lessonId: string) => {
+  const handleAddHomework = async (moduleId: string) => {
+    if (!course) return;
+    const newHomework: Homework = {
+      id: uuidv4(),
+      type: 'homework',
+      title: 'New Homework',
+      problems: [],
+    };
+    const updatedModules = course.modules.map(module => {
+      if (module.id === moduleId) {
+        return { ...module, content: [...module.content, newHomework] };
+      }
+      return module;
+    });
+    const updatedCourse = { ...course, modules: updatedModules };
+    try {
+      await updateCourse(course.id, updatedCourse);
+      setCourse(updatedCourse);
+      toast({ title: "Success", description: "Homework added successfully." });
+    } catch (error) {
+      console.error("Failed to add homework:", error);
+      toast({ title: "Error", description: "Failed to add homework.", variant: "destructive" });
+    }
+  };
+
+  const handleDeleteItem = (moduleId: string, itemId: string) => {
     if (!course) return;
     const updatedModules = course.modules.map(module => {
       if (module.id === moduleId) {
-        const updatedLessons = module.lessons.filter(lesson => lesson.id !== lessonId);
-        return { ...module, lessons: updatedLessons };
+        const updatedContent = module.content.filter(item => item.id !== itemId);
+        return { ...module, content: updatedContent };
       }
       return module;
     });
@@ -130,30 +156,30 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
       return;
     }
 
-    // Handle lesson reordering within or between modules
     const sourceModule = course.modules.find(m => m.id === source.droppableId);
     const destModule = course.modules.find(m => m.id === destination.droppableId);
 
     if (!sourceModule || !destModule) return;
 
-    // Moving within the same module
+    // Moving content within or between modules
+    const newSourceContent = Array.from(sourceModule.content);
+    const [removed] = newSourceContent.splice(source.index, 1);
+
     if (source.droppableId === destination.droppableId) {
-      const newLessons = Array.from(sourceModule.lessons);
-      const [removed] = newLessons.splice(source.index, 1);
-      newLessons.splice(destination.index, 0, removed);
+      // Moving within the same module
+      newSourceContent.splice(destination.index, 0, removed);
       const updatedModules = course.modules.map(m =>
-        m.id === sourceModule.id ? { ...m, lessons: newLessons } : m
+        m.id === sourceModule.id ? { ...m, content: newSourceContent } : m
       );
       setCourse({ ...course, modules: updatedModules });
-    } else { // Moving between different modules
-      const newSourceLessons = Array.from(sourceModule.lessons);
-      const [removed] = newSourceLessons.splice(source.index, 1);
-      const newDestLessons = Array.from(destModule.lessons);
-      newDestLessons.splice(destination.index, 0, removed);
+    } else {
+      // Moving between different modules
+      const newDestContent = Array.from(destModule.content);
+      newDestContent.splice(destination.index, 0, removed);
 
       const updatedModules = course.modules.map(m => {
-        if (m.id === sourceModule.id) return { ...m, lessons: newSourceLessons };
-        if (m.id === destModule.id) return { ...m, lessons: newDestLessons };
+        if (m.id === sourceModule.id) return { ...m, content: newSourceContent };
+        if (m.id === destModule.id) return { ...m, content: newDestContent };
         return m;
       });
       setCourse({ ...course, modules: updatedModules });
@@ -236,21 +262,21 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
                             />
                             <Button variant="destructive" size="sm" onClick={() => handleDeleteModule(module.id)}>Delete Module</Button>
                           </div>
-                          <Droppable droppableId={module.id} type="lesson">
+                          <Droppable droppableId={module.id} type="content">
                             {(provided) => (
                               <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
-                                {module.lessons.map((lesson, lessonIndex) => (
-                                  <Draggable key={lesson.id} draggableId={lesson.id} index={lessonIndex}>
+                                {module.content.map((item, itemIndex) => (
+                                  <Draggable key={item.id} draggableId={item.id} index={itemIndex}>
                                     {(provided) => (
                                       <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="p-4 border rounded-lg bg-background flex justify-between items-center">
-                                        <span className="font-semibold">{lesson.title}</span>
+                                        <span className="font-semibold">{item.title} {item.type === 'homework' && '(Homework)'}</span>
                                         <div className="flex items-center space-x-2">
-                                          <Link href={`/courses/${course.id}/lessons/${lesson.id}/edit`}>
+                                          <Link href={`/courses/${course.id}/${item.type === 'lesson' ? 'lessons' : 'homework'}/${item.id}/edit`}>
                                             <Button variant="outline" size="icon">
                                               <Pen className="h-4 w-4" />
                                             </Button>
                                           </Link>
-                                          <Button variant="destructive" size="sm" onClick={() => handleDeleteLesson(module.id, lesson.id)}>Delete</Button>
+                                          <Button variant="destructive" size="sm" onClick={() => handleDeleteItem(module.id, item.id)}>Delete</Button>
                                         </div>
                                       </div>
                                     )}
@@ -260,7 +286,10 @@ export default function EditCoursePage(props: { params: Promise<{ courseId: stri
                               </div>
                             )}
                           </Droppable>
-                          <Button onClick={() => handleAddLesson(module.id)} className="mt-4">Add Lesson</Button>
+                          <div className="flex gap-2 mt-4">
+                            <Button onClick={() => handleAddLesson(module.id)}>Add Lesson</Button>
+                            <Button onClick={() => handleAddHomework(module.id)}>Add Homework</Button>
+                          </div>
                         </div>
                       )}
                     </Draggable>

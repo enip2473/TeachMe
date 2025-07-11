@@ -1,7 +1,7 @@
 import { collection, getDocs, query, where, addDoc, doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { db, storage } from './firebase';
-import type { Subject, Course, Lesson, Module } from '@/lib/types';
+import type { Subject, Course, Lesson, Module, Homework } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export const getSubjects = async (): Promise<Subject[]> => {
@@ -29,7 +29,18 @@ export const getCourseById = async (id: string): Promise<Course | null> => {
   const courseDocRef = doc(db, 'courses', id);
   const docSnap = await getDoc(courseDocRef);
   if (docSnap.exists()) {
-    return docSnap.data() as Course;
+    const courseData = docSnap.data() as Course;
+    // Ensure modules and content arrays exist
+    if (!courseData.modules) {
+      courseData.modules = [];
+    }
+    courseData.modules = courseData.modules.map(module => {
+      if (!module.content) {
+        module.content = [];
+      }
+      return module;
+    });
+    return courseData;
   }
   return null;
 };
@@ -44,12 +55,25 @@ export const getLessonById = async (courseId: string, lessonId: string): Promise
   const course = await getCourseById(courseId);
   if (!course) return null;
   for (const module of course.modules) {
-    const lesson = module.lessons.find(l => l.id === lessonId);
+    const lesson = module.content.find(item => item.id === lessonId && item.type === 'lesson') as Lesson;
     if (lesson) {
       return { ...lesson, courseTitle: course.title, courseId: course.id };
     }
   }
   return null;
+};
+
+export const getHomeworkById = async (courseId: string, homeworkId: string): Promise<Homework | null> => {
+    const course = await getCourseById(courseId);
+    if (!course) return null;
+
+    for (const module of course.modules) {
+        const homework = module.content.find(item => item.id === homeworkId && item.type === 'homework') as Homework;
+        if (homework) {
+            return homework;
+        }
+    }
+    return null;
 };
 
 export const addSubject = async (name: string, description: string): Promise<void> => {
@@ -85,11 +109,11 @@ export const updateLesson = async (courseId: string, lessonId: string, updatedLe
   const contentUrl = await getDownloadURL(storageRef);
 
   const updatedModules = course.modules.map(module => {
-    const lessonIndex = module.lessons.findIndex(l => l.id === lessonId);
-    if (lessonIndex !== -1) {
-      const updatedLessons = [...module.lessons];
-      updatedLessons[lessonIndex] = { ...updatedLessonData, content: contentUrl };
-      return { ...module, lessons: updatedLessons };
+    const contentIndex = module.content.findIndex(item => item.id === lessonId && item.type === 'lesson');
+    if (contentIndex !== -1) {
+      const updatedContent = [...module.content];
+      updatedContent[contentIndex] = { ...updatedLessonData, content: contentUrl };
+      return { ...module, content: updatedContent };
     }
     return module;
   });
