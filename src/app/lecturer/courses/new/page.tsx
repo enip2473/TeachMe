@@ -17,14 +17,10 @@ import { Course, Subject } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
 
 const formSchema = z.object({
-  title: z.string().min(2, { message: '課程標題至少需要2個字元。
-' }),
-  description: z.string().min(10, { message: '描述至少需要10個字元。
-' }),
-  subject: z.string().min(1, { message: '請選擇一個科目。
-' }),
-  difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced'], { message: '請選擇一個難度。
-' }),
+  title: z.string().min(2, { message: '課程標題至少需要2個字元。' }),
+  description: z.string().min(10, { message: '描述至少需要10個字元。' }),
+  subject: z.string().min(1, { message: '請選擇一個科目。' }),
+  difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced'], { message: '請選擇一個難度。' }),
   image: z.string().url().optional().or(z.literal('')),
 });
 

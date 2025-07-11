@@ -14,10 +14,8 @@ import { addSubject } from '@/lib/data'; // We will create this function
 import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
-  name: z.string().min(2, { message: '科目名稱至少需要2個字元。
-' }),
-  description: z.string().min(10, { message: '描述至少需要10個字元。
-' }),
+  name: z.string().min(2, { message: '科目名稱至少需要2個字元。' }),
+  description: z.string().min(10, { message: '描述至少需要10個字元。' }),
 });
 
 export default function NewSubjectPage() {
