@@ -32,6 +32,13 @@ Authentication flow has been improved with a loading state to prevent UI flicker
 
 Lesson content is written in Markdown. The editing experience has been enhanced with `uiw/react-md-editor`, providing a richer interface. Code blocks within markdown are now rendered with syntax highlighting using `react-syntax-highlighter`. Lesson content is securely and consistently stored in Firebase Storage, with robust handling for updates and new lesson initialization.
 
+### AI-Powered Content Generation
+
+*   **Homework Generation:** Generate multiple-choice questions for homework assignments based on the content of a selected lesson.
+*   **Lesson Content Generation:** Generate full lesson content in Markdown format based on a provided lesson title and summary.
+
+To enable AI features, ensure the `GOOGLE_API_KEY` environment variable is set.
+
 ## Tech Stack
 
 *   [Next.js](https://nextjs.org/) - React framework

@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Sparkles } from 'lucide-react';
+import { generateLessonContent } from '@/ai/flows/generate-lesson-content';
 
 import MDEditor from '@uiw/react-md-editor';
 
@@ -20,6 +21,7 @@ export default function EditLessonPage(props: { params: Promise<{ courseId: stri
   const router = useRouter();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const [markdownContent, setMarkdownContent] = useState<string>('');
 
@@ -50,6 +52,39 @@ export default function EditLessonPage(props: { params: Promise<{ courseId: stri
       setMarkdownContent(value || '');
     } else {
       setLesson({ ...lesson, [field]: value });
+    }
+  };
+
+  const handleGenerateContent = async () => {
+    if (!lesson || !lesson.title || !lesson.summary) {
+      toast({
+        title: '錯誤',
+        description: '請填寫課程標題和摘要以生成內容。',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const { content } = await generateLessonContent({
+        title: lesson.title,
+        summary: lesson.summary,
+      });
+      setMarkdownContent(content);
+      toast({
+        title: '成功',
+        description: '課程內容已生成。',
+      });
+    } catch (error) {
+      console.error('Failed to generate lesson content:', error);
+      toast({
+        title: '錯誤',
+        description: '生成課程內容失敗。請再試一次。',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -96,6 +131,13 @@ export default function EditLessonPage(props: { params: Promise<{ courseId: stri
           placeholder="課程摘要"
           rows={4}
         />
+        <Button
+          onClick={handleGenerateContent}
+          disabled={isGenerating || !lesson.title || !lesson.summary}
+          className="w-full"
+        >
+          {isGenerating ? '生成中...' : <><Sparkles className="mr-2 h-4 w-4" /> 從標題和摘要生成內容</>}
+        </Button>
         <div data-color-mode="light">
           <MDEditor
             value={markdownContent}

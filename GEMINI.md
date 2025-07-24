@@ -38,6 +38,11 @@ Authentication flow has been improved with a loading state to prevent UI flicker
 *   **Homeworks:** Individual assignments within a module, supporting various problem types (starting with multiple-choice).
 *   **Lessons:** Individual learning units within a module. Lesson content is written in Markdown and rendered in the UI. The lesson editing experience has been enhanced, and new lesson content initialization is now correctly handled.
 
+### AI-Powered Content Generation
+
+*   **Homework Generation:** Generate multiple-choice questions for homework assignments based on the content of a selected lesson.
+*   **Lesson Content Generation:** Generate full lesson content in Markdown format based on a provided lesson title and summary.
+
 ### Development
 
 *   **Run development server:** `npm run dev`
