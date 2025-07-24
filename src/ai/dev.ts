@@ -1,4 +1,5 @@
 import { config } from 'dotenv';
 config();
 
-import '@/ai/flows/summarize-lesson.ts';
+import './flows/summarize-lesson';
+import './flows/generate-homework';

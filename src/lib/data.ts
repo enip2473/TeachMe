@@ -97,6 +97,14 @@ export const updateCourse = async (courseId: string, course: Course): Promise<vo
   await updateDoc(courseDocRef, { ...course });
 };
 
+export const getLessonContent = async (contentUrl: string): Promise<string> => {
+  const response = await fetch(contentUrl);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch lesson content: ${response.statusText}`);
+  }
+  return response.text();
+};
+
 export const updateLesson = async (courseId: string, lessonId: string, updatedLessonData: Lesson): Promise<void> => {
   const course = await getCourseById(courseId);
   if (!course) {

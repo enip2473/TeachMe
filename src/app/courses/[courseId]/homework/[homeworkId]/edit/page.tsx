@@ -1,10 +1,10 @@
 'use client';
 
-import { getHomeworkById, updateCourse, getCourseById } from '@/lib/data';
+import { getHomeworkById, updateCourse, getCourseById, getLessonContent } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import { useAuthContext } from '@/hooks/use-auth-context';
 import { useEffect, useState, use } from 'react';
-import { Homework, Course, ProblemType, MultipleChoiceProblem } from '@/lib/types';
+import { Homework, Course, ProblemType, MultipleChoiceProblem, Lesson } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Link from 'next/link';
 import { ArrowLeft, PlusCircle, Trash2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
+import { generateHomeworkFromLesson } from '@/ai/flows/generate-homework';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface EditHomeworkPageProps {
@@ -28,17 +29,35 @@ export default function EditHomeworkPage(props: EditHomeworkPageProps) {
   const { toast } = useToast();
   const [homework, setHomework] = useState<Homework | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
+  const [numQuestions, setNumQuestions] = useState<number>(5);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchHomework = async () => {
+    const fetchData = async () => {
       const homeworkData = await getHomeworkById(params.courseId, params.homeworkId);
       const courseData = await getCourseById(params.courseId);
       setHomework(homeworkData);
       setCourse(courseData);
+
+      if (courseData) {
+        const allLessons: Lesson[] = [];
+        courseData.modules.forEach(module => {
+          module.content.forEach(item => {
+            if (item.type === 'lesson') {
+              allLessons.push(item as Lesson);
+            }
+          });
+        });
+        setLessons(allLessons);
+        if (allLessons.length > 0) {
+          setSelectedLessonId(allLessons[0].id);
+        }
+      }
       setLoading(false);
     };
-    fetchHomework();
+    fetchData();
   }, [params.courseId, params.homeworkId]);
 
   const handleHomeworkChange = (field: keyof Homework, value: string) => {
@@ -162,6 +181,44 @@ export default function EditHomeworkPage(props: EditHomeworkPageProps) {
     }
   };
 
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleGenerateHomework = async () => {
+    if (!course || !selectedLessonId) return;
+
+    const lesson = lessons.find(l => l.id === selectedLessonId);
+
+    if (!lesson || !lesson.content) {
+      toast({
+        title: '錯誤',
+        description: '找不到可用的課程內容來生成作業。',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const lessonContent = await getLessonContent(lesson.content);
+      const { problems } = await generateHomeworkFromLesson({
+        lessonContent: lessonContent,
+        numQuestions: numQuestions,
+      });
+      if (homework) {
+        setHomework({ ...homework, problems });
+      }
+    } catch (error) {
+      console.error('Failed to generate homework:', error);
+      toast({
+        title: '錯誤',
+        description: '生成作業失敗。請再試一次。',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   if (loading) {
     return <div>載入中...</div>;
   }
@@ -191,11 +248,48 @@ export default function EditHomeworkPage(props: EditHomeworkPageProps) {
       </div>
 
       <h2 className="text-2xl font-bold font-headline mb-4">問題</h2>
-      <Button onClick={handleAddProblem} className="mb-4">
-        <PlusCircle className="mr-2 h-4 w-4" /> 新增選擇題
+      <div className="flex gap-4 mb-4">
+        <Button onClick={handleAddProblem}>
+          <PlusCircle className="mr-2 h-4 w-4" /> 新增選擇題
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <Label htmlFor="lesson-select">選擇課程</Label>
+          <Select
+            value={selectedLessonId || ''}
+            onValueChange={setSelectedLessonId}
+          >
+            <SelectTrigger id="lesson-select">
+              <SelectValue placeholder="選擇一個課程" />
+            </SelectTrigger>
+            <SelectContent>
+              {lessons.map(lesson => (
+                <SelectItem key={lesson.id} value={lesson.id}>
+                  {lesson.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="num-questions">問題數量</Label>
+          <Input
+            id="num-questions"
+            type="number"
+            value={numQuestions}
+            onChange={e => setNumQuestions(parseInt(e.target.value, 10))}
+            min={1}
+            max={10} // Set a reasonable max limit
+          />
+        </div>
+      </div>
+      <Button onClick={handleGenerateHomework} disabled={isGenerating || !selectedLessonId}>
+        {isGenerating ? '生成中...' : '從課程內容生成'}
       </Button>
 
-      <div className="space-y-6">
+      <div className="space-y-6 mt-6">
         {homework.problems.map((problemWrapper, index) => {
           if (problemWrapper.type === ProblemType.MultipleChoice) {
             const problem = problemWrapper.problem as MultipleChoiceProblem;
