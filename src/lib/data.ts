@@ -120,7 +120,7 @@ export const updateLesson = async (courseId: string, lessonId: string, updatedLe
     const contentIndex = module.content.findIndex(item => item.id === lessonId && item.type === 'lesson');
     if (contentIndex !== -1) {
       const updatedContent = [...module.content];
-      updatedContent[contentIndex] = { ...updatedLessonData, content: contentUrl };
+      updatedContent[contentIndex] = { ...updatedLessonData, content: contentUrl, quizzes: updatedLessonData.quizzes };
       return { ...module, content: updatedContent };
     }
     return module;

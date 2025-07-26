@@ -10,6 +10,13 @@ export interface Lesson {
   content: string;
   courseId?: string;
   courseTitle?: string;
+  quizzes?: Quiz[];
+}
+
+export interface Quiz {
+  id: string;
+  paragraph: number; // index of the paragraph in the lesson content
+  problem: MultipleChoiceProblem;
 }
 
 export interface Homework {

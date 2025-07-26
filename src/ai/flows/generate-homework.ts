@@ -23,12 +23,7 @@ const GenerateHomeworkInputSchema = z.object({
 });
 export type GenerateHomeworkInput = z.infer<typeof GenerateHomeworkInputSchema>;
 
-const MultipleChoiceProblemSchema = z.object({
-  id: z.string(),
-  question: z.string(),
-  options: z.array(z.string()),
-  correctAnswer: z.number(),
-});
+import { MultipleChoiceProblemSchema } from '../schemas';
 
 const GenerateHomeworkOutputSchema = z.object({
   problems: z.array(z.object({

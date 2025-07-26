@@ -8,7 +8,8 @@ import { useAuthContext } from '@/hooks/use-auth-context';
 import { Lesson, Course } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { MarkdownRenderer } from '@/components/markdown-renderer';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { QuizView } from './quiz-view';
 
 type LessonViewProps = {
   lesson: (Lesson & { courseTitle: string; courseId: string }) | null;
@@ -19,6 +20,8 @@ export function LessonView({ lesson, course }: LessonViewProps){
   const { user } = useAuthContext();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
+  const [currentParagraph, setCurrentParagraph] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!lesson?.content) return;
@@ -37,6 +40,25 @@ export function LessonView({ lesson, course }: LessonViewProps){
     fetchContent();
   }, [lesson?.content]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (contentRef.current) {
+        const paragraphs = Array.from(contentRef.current.children);
+        const scrollTop = window.scrollY;
+        const newCurrentParagraph = paragraphs.findIndex(p => {
+          const rect = p.getBoundingClientRect();
+          return rect.top <= scrollTop && scrollTop < rect.bottom;
+        });
+        if (newCurrentParagraph !== -1) {
+          setCurrentParagraph(newCurrentParagraph);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [content]);
+
   if (!user) {
     return <div>請登入以查看此課程。</div>;
   }
@@ -46,6 +68,12 @@ export function LessonView({ lesson, course }: LessonViewProps){
   }
 
   const canEdit = user.uid === course.ownerId;
+  const quiz = lesson.quizzes?.find(q => q.paragraph === currentParagraph);
+
+  const handleQuizAnswer = (isCorrect: boolean) => {
+    // TODO: Handle quiz answer
+    console.log(`Quiz answer is ${isCorrect ? 'correct' : 'incorrect'}`);
+  };
 
   return (
     <div className="container max-w-4xl mx-auto py-8">
@@ -66,9 +94,14 @@ export function LessonView({ lesson, course }: LessonViewProps){
         {lesson.summary && <p className="text-lg text-muted-foreground">{lesson.summary}</p>}
       </div>
 
-      <article className="prose prose-lg dark:prose-invert max-w-none">
-        {loading ? <p>載入中...</p> : <MarkdownRenderer content={content} />}
-      </article>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <article ref={contentRef} className="prose prose-lg dark:prose-invert max-w-none md:col-span-2">
+          {loading ? <p>載入中...</p> : <MarkdownRenderer content={content} />}
+        </article>
+        <div>
+          {quiz && <QuizView quiz={quiz} onAnswer={handleQuizAnswer} />}
+        </div>
+      </div>
 
       <Separator className="my-12" />
 
